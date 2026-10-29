@@ -10,7 +10,7 @@ interface Props {
 }
 
 const { name, class: className, title } = Astro.props;
-const ariaProps = title ? { role: 'img', 'aria-label': title } : { 'aria-hidden': 'true' };
+const ariaProps = title ? { role: 'img' as const, 'aria-label': title } : { 'aria-hidden': 'true' as const };
 ---
 
 {name === 'whatsapp' && (
