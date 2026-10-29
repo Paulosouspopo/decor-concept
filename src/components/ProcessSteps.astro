@@ -1,0 +1,62 @@
+---
+/** Les étapes du chantier (vraie séquence, d'où la numérotation). */
+import { etapes } from '../data/methode';
+---
+
+<ol class="steps">
+  {
+    etapes.map((etape, index) => (
+      <li class="step">
+        <span class="step-number" aria-hidden="true">{index + 1}</span>
+        <h3 class="step-title">{etape.title}</h3>
+        <p class="step-text">{etape.text}</p>
+      </li>
+    ))
+  }
+</ol>
+
+<style>
+  .steps {
+    display: grid;
+    gap: 2.25rem;
+    counter-reset: none;
+  }
+
+  @media (min-width: 700px) {
+    .steps {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 2.5rem 3rem;
+    }
+  }
+
+  @media (min-width: 1100px) {
+    .steps {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+
+  .step {
+    position: relative;
+    padding-top: 1.25rem;
+    border-top: 1px solid color-mix(in srgb, currentColor 22%, transparent);
+  }
+
+  .step-number {
+    display: block;
+    font-family: var(--ff-display);
+    font-size: 2.6rem;
+    line-height: 1;
+    color: var(--laiton);
+  }
+
+  .step-title {
+    margin-top: 0.9rem;
+    font-size: 1.35rem;
+  }
+
+  .step-text {
+    margin-top: 0.6rem;
+    opacity: 0.82;
+    max-width: 26rem;
+  }
+</style>

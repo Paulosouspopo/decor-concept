@@ -1,0 +1,184 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHero from '../components/PageHero.astro';
+import ProcessSteps from '../components/ProcessSteps.astro';
+import ContactButtons from '../components/ContactButtons.astro';
+import CtaBlock from '../components/CtaBlock.astro';
+import Icon from '../components/Icon.astro';
+import { charteChantier } from '../data/methode';
+import { whatsappMessages } from '../lib/contact';
+
+// Exemple de lignes de devis, pour montrer le niveau de détail. Montants illustratifs.
+const devisExemple = [
+  { lot: 'Électricité', ligne: "Fourniture et pose d'un tableau électrique", qte: '1 u', pu: '—' },
+  { lot: 'Électricité', ligne: 'Création de prises de courant encastrées', qte: '24 u', pu: '—' },
+  { lot: 'Sols', ligne: 'Ponçage et vitrification de parquet ancien', qte: '62 m²', pu: '—' },
+  { lot: 'Peinture', ligne: 'Préparation des murs et deux couches de peinture mate', qte: '210 m²', pu: '—' },
+];
+---
+
+<BaseLayout
+  title="Notre méthode : devis détaillé, planning, suivi"
+  description="Comment se déroule un chantier avec Decor Concept : visite technique, devis poste par poste, planning écrit, point hebdomadaire avec photos et charte chantier."
+  whatsappMessage={whatsappMessages.devis}
+>
+  <PageHero
+    title="Une méthode écrite, du premier appel à la réception"
+    lead="Ce qui inquiète dans une rénovation, c'est l'inconnu : le prix final, la date de fin, ce qui se passe quand on n'est pas là. Notre méthode répond à ces trois questions avant le démarrage."
+    crumbs={[{ name: 'Notre méthode', href: '/methode/' }]}
+  >
+    <ContactButtons whatsappMessage={whatsappMessages.devis} tracking="methode" />
+  </PageHero>
+
+  <section class="section section-ardoise">
+    <div class="container-site">
+      <h2 class="block-title">Les six étapes de votre chantier</h2>
+      <ProcessSteps />
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container-site two-col">
+      <div>
+        <h2>Un devis que vous pouvez lire</h2>
+        <div class="prose-site">
+          <p>
+            Chaque ouvrage est décrit, quantifié et chiffré. Vous voyez ce qui est prévu pièce par pièce, et vous pouvez
+            comparer avec n'importe quel autre devis.
+          </p>
+          <p>
+            Si un imprévu apparaît en cours de chantier, un plancher abîmé derrière un doublage par exemple, il vous est
+            présenté avec son chiffrage. Rien n'est réalisé sans votre accord.
+          </p>
+        </div>
+      </div>
+      <figure class="devis">
+        <figcaption class="meta">Extrait d'un devis type (montants masqués)</figcaption>
+        <table>
+          <thead>
+            <tr>
+              <th scope="col">Lot</th>
+              <th scope="col">Ouvrage</th>
+              <th scope="col">Quantité</th>
+              <th scope="col">Prix unitaire</th>
+            </tr>
+          </thead>
+          <tbody>
+            {
+              devisExemple.map((row) => (
+                <tr>
+                  <td>{row.lot}</td>
+                  <td>{row.ligne}</td>
+                  <td>{row.qte}</td>
+                  <td>{row.pu}</td>
+                </tr>
+              ))
+            }
+          </tbody>
+        </table>
+      </figure>
+    </div>
+  </section>
+
+  <section class="section section-pierre">
+    <div class="container-site two-col">
+      <div>
+        <h2>Suivre son chantier, même à distance</h2>
+        <div class="prose-site">
+          <p>
+            Chaque semaine, vous recevez sur WhatsApp un point d'avancement avec photos : ce qui a été fait, ce qui arrive
+            la semaine suivante, les choix qui vous attendent.
+          </p>
+          <p>
+            Vous avez un seul interlocuteur, joignable directement, du premier rendez-vous à la réception. Si vous vivez à
+            l'étranger, les choix de finitions peuvent se faire en visio, échantillons en main.
+          </p>
+        </div>
+      </div>
+      <div>
+        <h2>Notre charte chantier</h2>
+        <ul class="charte">
+          {
+            charteChantier.map((item) => (
+              <li>
+                <Icon name="check" class="charte-icon" />
+                <span>{item}</span>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <CtaBlock whatsappMessage={whatsappMessages.devis} tracking="fin-methode" />
+</BaseLayout>
+
+<style>
+  .block-title {
+    margin-bottom: 3rem;
+  }
+
+  .two-col {
+    display: grid;
+    gap: 3rem;
+  }
+
+  @media (min-width: 900px) {
+    .two-col {
+      grid-template-columns: 1fr 1fr;
+      gap: 5rem;
+      align-items: start;
+    }
+  }
+
+  .two-col h2 {
+    margin-bottom: 1.5rem;
+  }
+
+  .devis {
+    background: var(--blanc);
+    border: 1px solid var(--pierre-fonce);
+    padding: 1.25rem;
+    overflow-x: auto;
+  }
+
+  .devis table {
+    width: 100%;
+    margin-top: 0.75rem;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+  }
+
+  .devis th {
+    text-align: left;
+    font-weight: 600;
+    padding: 0.5rem 0.6rem 0.5rem 0;
+    border-bottom: 1px solid var(--ardoise);
+    white-space: nowrap;
+  }
+
+  .devis td {
+    padding: 0.6rem 0.6rem 0.6rem 0;
+    border-bottom: 1px solid var(--pierre);
+    vertical-align: top;
+  }
+
+  .charte {
+    display: grid;
+    gap: 1rem;
+  }
+
+  .charte li {
+    display: grid;
+    grid-template-columns: 1.25rem 1fr;
+    gap: 0.75rem;
+  }
+
+  .charte :global(.charte-icon) {
+    width: 1.25rem;
+    height: 1.25rem;
+    margin-top: 0.2rem;
+    color: var(--vert);
+  }
+</style>

@@ -1,0 +1,80 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHero from '../components/PageHero.astro';
+import { site, aCompleter } from '../config/site';
+
+/*
+ * Toutes les valeurs viennent de src/config/site.ts.
+ * Les champs vides s'affichent « [… à compléter] » : à remplir AVANT la mise en production.
+ */
+const { legal, address, contact, hosting } = site;
+const adresse = address.street ? `${address.street}, ${address.postalCode} ${address.city}` : '';
+---
+
+<BaseLayout title="Mentions légales" description={`Mentions légales du site ${site.name}.`}>
+  <PageHero title="Mentions légales" crumbs={[{ name: 'Mentions légales', href: '/mentions-legales/' }]} />
+
+  <section class="section">
+    <div class="container-site prose-site">
+      <h2>Éditeur du site</h2>
+      <p>
+        {aCompleter(legal.companyName, 'dénomination sociale')} ({site.name}), {aCompleter(legal.legalForm, 'forme juridique')}
+        au capital de {aCompleter(legal.capital, 'capital')}.<br />
+        Siège social : {aCompleter(adresse, 'adresse du siège')}.<br />
+        SIRET : {aCompleter(legal.siret, 'SIRET')}. Immatriculation : {aCompleter(legal.registration, 'RCS ou Répertoire des métiers')}.<br />
+        TVA intracommunautaire : {aCompleter(legal.vatNumber, 'numéro de TVA')}.<br />
+        Téléphone : {contact.phoneDisplay}. Email : {contact.email}.
+      </p>
+      <p>Directeur de la publication : {aCompleter(legal.publicationDirector, 'nom du directeur de la publication')}.</p>
+
+      <h2>Hébergement</h2>
+      <p>
+        Le site est hébergé par {hosting.name} (<a href={hosting.url} rel="noopener">{hosting.url.replace('https://', '')}</a>).
+        {site.demo && <span> {hosting.details}.</span>}
+      </p>
+
+      <h2>Assurance professionnelle</h2>
+      <p>
+        Assurance décennale souscrite auprès de {aCompleter(legal.insurance.insurer, 'assureur')}, contrat n°
+        {' '}{aCompleter(legal.insurance.policyNumber, 'numéro de contrat')}, couverture géographique :
+        {' '}{aCompleter(legal.insurance.coverage, 'zone couverte')}.
+      </p>
+
+      <h2>Médiation de la consommation</h2>
+      <p>
+        Conformément aux articles L.611-1 et suivants du Code de la consommation, le client consommateur peut recourir
+        gratuitement au médiateur de la consommation dont relève {site.name}, après avoir adressé une réclamation écrite
+        préalable à l'entreprise :
+      </p>
+      <p>
+        {aCompleter(legal.mediator.name, 'nom du médiateur')}<br />
+        {aCompleter(legal.mediator.address, 'adresse postale du médiateur')}<br />
+        {
+          legal.mediator.url ? (
+            <a href={legal.mediator.url} rel="noopener">{legal.mediator.url}</a>
+          ) : (
+            aCompleter('', 'site internet du médiateur')
+          )
+        }
+      </p>
+
+      <h2>Propriété intellectuelle</h2>
+      <p>
+        Les textes, photographies et éléments graphiques de ce site sont la propriété de {site.name} ou utilisés avec
+        l'autorisation de leurs auteurs. Toute reproduction sans autorisation est interdite.
+      </p>
+
+      <h2>Données personnelles</h2>
+      <p>
+        Le traitement des informations transmises par le formulaire de contact est décrit dans notre
+        <a href="/confidentialite/">politique de confidentialité</a>.
+      </p>
+
+      <h2>Avis clients</h2>
+      <p>
+        Les avis affichés sur ce site sont soit des avis publiés sur notre fiche Google, reproduits avec leur date, soit
+        des témoignages de clients ayant validé leur texte par écrit. Ils ne font l'objet d'aucune contrepartie.
+      </p>
+    </div>
+  </section>
+</BaseLayout>

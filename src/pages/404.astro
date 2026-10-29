@@ -1,0 +1,31 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { mainNav } from '../data/navigation';
+---
+
+<BaseLayout title="Page introuvable" description="Cette page n'existe pas ou a été déplacée." noindex>
+  <section class="section">
+    <div class="container-site notfound">
+      <h1>Cette page n'existe pas</h1>
+      <p class="lead">Elle a peut-être été déplacée. Voici les pages principales du site :</p>
+      <ul>
+        <li><a href="/" class="link">Accueil</a></li>
+        {mainNav.map((item) => <li><a href={item.href} class="link">{item.label}</a></li>)}
+        <li><a href="/contact/" class="link">Contact et devis</a></li>
+      </ul>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .notfound {
+    display: grid;
+    gap: 1.25rem;
+    padding-block: 2rem;
+  }
+
+  ul {
+    display: grid;
+    gap: 0.5rem;
+  }
+</style>

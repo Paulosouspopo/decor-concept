@@ -1,0 +1,53 @@
+---
+import '@fontsource/marcellus';
+import '@fontsource-variable/hanken-grotesk';
+import '../styles/global.css';
+
+import Seo from '../components/Seo.astro';
+import JsonLd from '../components/JsonLd.astro';
+import DemoBanner from '../components/DemoBanner.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import ContactBar from '../components/ContactBar.astro';
+import { site } from '../config/site';
+
+interface Props {
+  title: string;
+  description: string;
+  noindex?: boolean;
+  image?: string;
+  type?: 'website' | 'article';
+  /** Données structurées propres à la page. */
+  jsonLd?: Record<string, unknown> | Record<string, unknown>[];
+  /** Message WhatsApp pré-rempli de la barre mobile pour cette page. */
+  whatsappMessage?: string;
+}
+
+const { title, description, noindex, image, type, jsonLd, whatsappMessage } = Astro.props;
+const { umamiWebsiteId, umamiSrc } = site.analytics;
+---
+
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <meta name="theme-color" content="#f2f2ee" />
+    <Seo title={title} description={description} noindex={noindex} image={image} type={type} />
+    {jsonLd && <JsonLd data={jsonLd} />}
+    {
+      /* Mesure d'audience sans cookies (Umami). Chargée seulement si configurée. */
+      umamiWebsiteId && <script is:inline defer src={umamiSrc} data-website-id={umamiWebsiteId} />
+    }
+  </head>
+  <body>
+    <DemoBanner />
+    <Header />
+    <main id="contenu">
+      <slot />
+    </main>
+    <Footer />
+    <ContactBar whatsappMessage={whatsappMessage} />
+  </body>
+</html>

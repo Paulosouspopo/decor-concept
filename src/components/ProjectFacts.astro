@@ -1,0 +1,76 @@
+---
+/**
+ * Fiche technique d'une réalisation, dessinée comme le cartouche
+ * d'un plan d'architecte.
+ */
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+  project: CollectionEntry<'realisations'>;
+}
+
+const { data } = Astro.props.project;
+
+const rows = [
+  { label: 'Lieu', value: data.location },
+  { label: 'Surface', value: `${data.surface} m²` },
+  { label: 'Durée du chantier', value: data.duration },
+  { label: 'Année', value: String(data.year) },
+  data.building ? { label: 'Bâtiment', value: data.building } : null,
+  data.architect ? { label: 'Architecte', value: data.architect } : null,
+].filter((row): row is { label: string; value: string } => row !== null);
+---
+
+<dl class="cartouche">
+  {
+    rows.map((row) => (
+      <div class="cell">
+        <dt>{row.label}</dt>
+        <dd>{row.value}</dd>
+      </div>
+    ))
+  }
+  {
+    data.trades.length > 0 && (
+      <div class="cell cell-wide">
+        <dt>Corps d'état coordonnés</dt>
+        <dd>{data.trades.join(', ')}</dd>
+      </div>
+    )
+  }
+</dl>
+
+<style>
+  .cartouche {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    border-top: 1px solid var(--ardoise);
+    border-left: 1px solid var(--ardoise);
+  }
+
+  @media (min-width: 768px) {
+    .cartouche {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+
+  .cell {
+    padding: 0.85rem 1rem;
+    border-right: 1px solid var(--ardoise);
+    border-bottom: 1px solid var(--ardoise);
+  }
+
+  .cell-wide {
+    grid-column: 1 / -1;
+  }
+
+  dt {
+    font-size: 0.8rem;
+    color: var(--gris);
+  }
+
+  dd {
+    margin-top: 0.2rem;
+    font-weight: 600;
+  }
+</style>

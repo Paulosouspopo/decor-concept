@@ -1,0 +1,244 @@
+---
+import { getCollection, render, type CollectionEntry } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHero from '../../components/PageHero.astro';
+import ContactButtons from '../../components/ContactButtons.astro';
+import Photo from '../../components/Photo.astro';
+import ProjectCard from '../../components/ProjectCard.astro';
+import Faq from '../../components/Faq.astro';
+import CtaBlock from '../../components/CtaBlock.astro';
+import Icon from '../../components/Icon.astro';
+import { serviceSchema } from '../../lib/schema';
+import { whatsappMessages } from '../../lib/contact';
+
+export async function getStaticPaths() {
+  const services = await getCollection('services');
+  return services.map((service) => ({ params: { slug: service.id }, props: { service } }));
+}
+
+interface Props {
+  service: CollectionEntry<'services'>;
+}
+
+const { service } = Astro.props;
+const { data } = service;
+const { Content } = await render(service);
+
+const projects = (await getCollection('realisations'))
+  .filter((p) => (p.data.services as string[]).includes(service.id))
+  .sort((a, b) => a.data.order - b.data.order)
+  .slice(0, 3);
+
+const otherServices = (await getCollection('services'))
+  .filter((s) => s.id !== service.id)
+  .sort((a, b) => a.data.order - b.data.order);
+
+const relatedArticles = (await getCollection('conseils')).filter(
+  (a) => !a.data.draft && a.data.service === service.id,
+);
+
+const waMessage = whatsappMessages.service(data.navTitle);
+---
+
+<BaseLayout
+  title={data.metaTitle}
+  description={data.metaDescription}
+  jsonLd={serviceSchema(data.title, data.metaDescription, `/renovation/${service.id}/`)}
+  whatsappMessage={waMessage}
+>
+  <PageHero
+    title={data.title}
+    lead={data.intro}
+    crumbs={[
+      { name: 'Rénovation', href: '/renovation/' },
+      { name: data.navTitle, href: `/renovation/${service.id}/` },
+    ]}
+  >
+    <ContactButtons whatsappMessage={waMessage} tracking={`service-${service.id}`} />
+  </PageHero>
+
+  <section class="section">
+    <div class="container-site service-grid">
+      <div>
+        <Photo image={data.cover} alt={data.title} label={data.navTitle.toLowerCase()} ratio="4 / 3" />
+      </div>
+      <div>
+        <h2 class="includes-title">Ce que nous prenons en charge</h2>
+        <ul class="includes">
+          {
+            data.includes.map((item) => (
+              <li>
+                <Icon name="check" class="includes-icon" />
+                <span>{item}</span>
+              </li>
+            ))
+          }
+        </ul>
+        {data.duration && <p class="meta duration">Durée type : {data.duration}</p>}
+      </div>
+    </div>
+  </section>
+
+  <section class="section section-pierre">
+    <div class="container-site">
+      <div class="prose-site">
+        <Content />
+      </div>
+    </div>
+  </section>
+
+  {
+    projects.length > 0 && (
+      <section class="section">
+        <div class="container-site">
+          <h2 class="block-title">Réalisations</h2>
+          <div class="projects">
+            {projects.map((project) => <ProjectCard project={project} />)}
+          </div>
+        </div>
+      </section>
+    )
+  }
+
+  {
+    data.faq.length > 0 && (
+      <section class="section section-pierre">
+        <div class="container-site faq-grid">
+          <h2>Vos questions</h2>
+          <Faq items={data.faq} />
+        </div>
+      </section>
+    )
+  }
+
+  <section class="section">
+    <div class="container-site related">
+      <div>
+        <h2 class="related-title">Nos autres prestations</h2>
+        <ul class="related-list">
+          {
+            otherServices.map((s) => (
+              <li>
+                <a href={`/renovation/${s.id}/`} class="link">
+                  {s.data.navTitle}
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+      {
+        relatedArticles.length > 0 && (
+          <div>
+            <h2 class="related-title">À lire</h2>
+            <ul class="related-list">
+              {relatedArticles.map((a) => (
+                <li>
+                  <a href={`/conseils/${a.id}/`} class="link">
+                    {a.data.title}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )
+      }
+    </div>
+  </section>
+
+  <CtaBlock whatsappMessage={waMessage} tracking={`fin-service-${service.id}`} />
+</BaseLayout>
+
+<style>
+  .service-grid {
+    display: grid;
+    gap: 2.5rem;
+  }
+
+  @media (min-width: 900px) {
+    .service-grid {
+      grid-template-columns: 1fr 1fr;
+      gap: 4.5rem;
+      align-items: start;
+    }
+  }
+
+  .includes-title {
+    font-size: clamp(1.5rem, 1.3rem + 0.8vw, 2rem);
+  }
+
+  .includes {
+    margin-top: 1.5rem;
+    display: grid;
+    gap: 0.85rem;
+  }
+
+  .includes li {
+    display: grid;
+    grid-template-columns: 1.25rem 1fr;
+    gap: 0.75rem;
+    align-items: start;
+  }
+
+  .includes :global(.includes-icon) {
+    width: 1.25rem;
+    height: 1.25rem;
+    margin-top: 0.2rem;
+    color: var(--vert);
+  }
+
+  .duration {
+    margin-top: 1.75rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--pierre-fonce);
+  }
+
+  .block-title {
+    margin-bottom: 2.5rem;
+  }
+
+  .projects {
+    display: grid;
+    gap: 2.5rem;
+  }
+
+  @media (min-width: 900px) {
+    .projects {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+
+  .faq-grid {
+    display: grid;
+    gap: 2rem;
+  }
+
+  @media (min-width: 900px) {
+    .faq-grid {
+      grid-template-columns: 0.7fr 1.3fr;
+      gap: 4rem;
+      align-items: start;
+    }
+  }
+
+  .related {
+    display: grid;
+    gap: 2.5rem;
+  }
+
+  @media (min-width: 900px) {
+    .related {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  .related-title {
+    font-size: 1.5rem;
+  }
+
+  .related-list {
+    margin-top: 1rem;
+    display: grid;
+    gap: 0.6rem;
+  }
+</style>

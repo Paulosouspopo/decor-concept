@@ -1,0 +1,73 @@
+---
+/**
+ * Barre de contact fixe en bas d'écran, sur mobile uniquement.
+ * Trois gestes : appeler, écrire sur WhatsApp, demander un devis.
+ */
+import Icon from './Icon.astro';
+import { phoneLink, whatsappLink } from '../lib/contact';
+
+interface Props {
+  whatsappMessage?: string;
+}
+
+const { whatsappMessage } = Astro.props;
+---
+
+<nav class="contact-bar" aria-label="Contact rapide">
+  <a href={phoneLink} data-umami-event="clic-telephone-barre">
+    <Icon name="phone" />
+    <span>Appeler</span>
+  </a>
+  <a href={whatsappLink(whatsappMessage)} data-umami-event="clic-whatsapp-barre" target="_blank" rel="noopener">
+    <Icon name="whatsapp" />
+    <span>WhatsApp</span>
+  </a>
+  <a href="/contact/" class="contact-bar-devis" data-umami-event="clic-devis-barre">
+    <span>Devis</span>
+  </a>
+</nav>
+
+<style>
+  .contact-bar {
+    position: fixed;
+    inset: auto 0 0 0;
+    z-index: 45;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1.2fr;
+    background: var(--platre);
+    border-top: 1px solid var(--pierre-fonce);
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+
+  .contact-bar a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.45rem;
+    min-height: 3.75rem;
+    font-weight: 600;
+    font-size: 0.95rem;
+    text-decoration: none;
+    color: var(--ardoise);
+  }
+
+  .contact-bar a + a {
+    border-left: 1px solid var(--pierre);
+  }
+
+  .contact-bar :global(svg) {
+    width: 1.2rem;
+    height: 1.2rem;
+  }
+
+  .contact-bar .contact-bar-devis {
+    background: var(--vert);
+    color: var(--blanc);
+  }
+
+  @media (min-width: 768px) {
+    .contact-bar {
+      display: none;
+    }
+  }
+</style>

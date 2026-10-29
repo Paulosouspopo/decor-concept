@@ -1,0 +1,158 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHero from '../components/PageHero.astro';
+import ContactButtons from '../components/ContactButtons.astro';
+import ProjectCard from '../components/ProjectCard.astro';
+import CtaBlock from '../components/CtaBlock.astro';
+import { whatsappMessages } from '../lib/contact';
+
+const engagements = [
+  {
+    title: 'Vos plans, à la lettre',
+    text: "Nous exécutons votre conception sans la réinterpréter. Une question sur un détail ? Nous vous la posons avant d'agir.",
+  },
+  {
+    title: 'Un chef de chantier dédié',
+    text: 'Le même interlocuteur pour vous et pour votre client, sur toute la durée du chantier.',
+  },
+  {
+    title: 'Un point chaque semaine',
+    text: "Avancement, photos, décisions à prendre : vous recevez le même point que votre client, ou un point séparé si vous préférez.",
+  },
+  {
+    title: 'Des finitions à votre niveau',
+    text: 'Supports dressés avant la pose, calepinages respectés, menuiseries ajustées : les détails qui font un projet réussi.',
+  },
+  {
+    title: 'Tous les corps d’état réunis',
+    text: 'Une seule entreprise à coordonner, avec un planning unique et une responsabilité claire.',
+  },
+  {
+    title: 'Assurés et transparents',
+    text: 'Assurance décennale et RC professionnelle, attestations fournies, devis détaillé poste par poste.',
+  },
+];
+
+const references = (await getCollection('realisations'))
+  .filter((p) => p.data.architect)
+  .sort((a, b) => a.data.order - b.data.order);
+---
+
+<BaseLayout
+  title="Architectes et décorateurs : entreprise d'exécution à Paris"
+  description="Architectes d'intérieur et décorateurs : Decor Concept réalise vos projets à Paris, tous corps d'état, dans le respect de vos plans, avec un chef de chantier dédié."
+  whatsappMessage={whatsappMessages.architecte}
+>
+  <PageHero
+    title="Architectes et décorateurs : vous concevez, nous réalisons"
+    lead="Une entreprise générale qui respecte vos plans, tient ses délais et soigne les finitions. Pour que votre projet ressemble à ce que vous avez dessiné."
+    crumbs={[{ name: 'Architectes', href: '/architectes/' }]}
+  >
+    <ContactButtons whatsappMessage={whatsappMessages.architecte} devisLabel="Nous envoyer un projet" tracking="architectes" />
+  </PageHero>
+
+  <section class="section">
+    <div class="container-site">
+      <ul class="engagements">
+        {
+          engagements.map((e) => (
+            <li>
+              <h2 class="engagement-title">{e.title}</h2>
+              <p>{e.text}</p>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  {
+    references.length > 0 && (
+      <section class="section section-pierre">
+        <div class="container-site">
+          <h2 class="block-title">Projets réalisés avec des architectes</h2>
+          <div class="refs">
+            {references.map((p) => <ProjectCard project={p} />)}
+          </div>
+        </div>
+      </section>
+    )
+  }
+
+  <section class="section">
+    <div class="container-site plaquette">
+      <h2>Notre plaquette</h2>
+      <p class="lead">
+        Références, organisation, assurances : une présentation à transmettre à vos clients ou à garder pour vos prochains
+        projets.
+      </p>
+      <!-- À FAIRE en V1 : déposer le PDF dans public/ et remplacer ce texte par un lien de téléchargement. -->
+      <p class="meta">Plaquette PDF en préparation. Demandez-la-nous par WhatsApp ou par email.</p>
+    </div>
+  </section>
+
+  <CtaBlock
+    title="Un projet à confier ?"
+    text="Envoyez-nous vos plans et votre descriptif : nous revenons vers vous avec une première estimation et une date de visite."
+    whatsappMessage={whatsappMessages.architecte}
+    tracking="fin-architectes"
+  />
+</BaseLayout>
+
+<style>
+  .engagements {
+    display: grid;
+    gap: 2.5rem;
+  }
+
+  @media (min-width: 700px) {
+    .engagements {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 3rem;
+    }
+  }
+
+  @media (min-width: 1100px) {
+    .engagements {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+
+  .engagements li {
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--laiton);
+  }
+
+  .engagement-title {
+    font-size: 1.45rem;
+  }
+
+  .engagements p {
+    margin-top: 0.6rem;
+    color: var(--gris);
+  }
+
+  .block-title {
+    margin-bottom: 2.5rem;
+  }
+
+  .refs {
+    display: grid;
+    gap: 2.5rem;
+  }
+
+  @media (min-width: 768px) {
+    .refs {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  .plaquette .lead {
+    margin-top: 1rem;
+  }
+
+  .plaquette .meta {
+    margin-top: 1rem;
+  }
+</style>

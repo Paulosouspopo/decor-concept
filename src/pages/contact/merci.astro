@@ -1,0 +1,35 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { site } from '../../config/site';
+import { whatsappLink, whatsappMessages } from '../../lib/contact';
+---
+
+<BaseLayout
+  title="Demande envoyée"
+  description="Votre demande de devis a bien été envoyée à Decor Concept."
+  noindex
+>
+  <section class="section">
+    <div class="container-site merci">
+      <h1>Demande envoyée</h1>
+      <p class="lead">
+        Merci. Nous avons bien reçu votre demande et nous vous rappelons {site.contact.responseDelay} pour en parler.
+      </p>
+      <p>
+        Vous avez des plans ou des photos de votre appartement ?
+        <a href={whatsappLink(whatsappMessages.devis)} class="link" target="_blank" rel="noopener">Envoyez-les sur WhatsApp</a>,
+        cela nous aidera à préparer la visite.
+      </p>
+      <p><a href="/realisations/" class="btn btn-secondary">Voir nos réalisations</a></p>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .merci {
+    display: grid;
+    gap: 1.25rem;
+    max-width: 44rem;
+    padding-block: 2rem;
+  }
+</style>

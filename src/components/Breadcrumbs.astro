@@ -1,0 +1,48 @@
+---
+import JsonLd from './JsonLd.astro';
+import { breadcrumbSchema } from '../lib/schema';
+
+interface Props {
+  items: { name: string; href: string }[];
+}
+
+const all = [{ name: 'Accueil', href: '/' }, ...Astro.props.items];
+---
+
+<nav aria-label="Fil d'Ariane" class="crumbs">
+  <ol>
+    {
+      all.map((item, index) => (
+        <li>
+          {index < all.length - 1 ? <a href={item.href}>{item.name}</a> : <span aria-current="page">{item.name}</span>}
+        </li>
+      ))
+    }
+  </ol>
+</nav>
+<JsonLd data={breadcrumbSchema(all)} />
+
+<style>
+  .crumbs ol {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem 0.5rem;
+    font-size: 0.85rem;
+    color: var(--gris);
+  }
+
+  .crumbs li + li::before {
+    content: '/';
+    margin-right: 0.5rem;
+    color: var(--pierre-fonce);
+  }
+
+  .crumbs a {
+    text-decoration: none;
+  }
+
+  .crumbs a:hover {
+    text-decoration: underline;
+    text-decoration-color: var(--laiton);
+  }
+</style>

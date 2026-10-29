@@ -1,0 +1,146 @@
+---
+import { site, aCompleter } from '../config/site';
+import { mainNav, legalNav } from '../data/navigation';
+import { phoneLink, emailLink, whatsappLink } from '../lib/contact';
+import { getCollection } from 'astro:content';
+
+const zones = (await getCollection('zones')).sort((a, b) => a.data.order - b.data.order);
+const year = new Date().getFullYear();
+const { insurance, mediator } = site.legal;
+---
+
+<footer class="site-footer section-ardoise">
+  <div class="container-site footer-grid">
+    <div class="footer-brand">
+      <p class="footer-name">{site.name}</p>
+      <p class="meta">{site.baseline}</p>
+      <p class="footer-pitch">
+        Rénovation complète d'appartements à Paris et dans l'ouest parisien, par notre propre équipe et un
+        interlocuteur unique.
+      </p>
+    </div>
+
+    <div>
+      <p class="footer-title">Contact</p>
+      <ul class="footer-list">
+        <li><a href={phoneLink} data-umami-event="clic-telephone-footer">{site.contact.phoneDisplay}</a></li>
+        <li><a href={whatsappLink()} data-umami-event="clic-whatsapp-footer">WhatsApp</a></li>
+        <li><a href={emailLink} data-umami-event="clic-email-footer">{site.contact.email}</a></li>
+        <li class="meta">{site.contact.hours}</li>
+        {
+          site.address.showOnSite && site.address.street && (
+            <li class="meta">
+              {site.address.street}, {site.address.postalCode} {site.address.city}
+            </li>
+          )
+        }
+      </ul>
+    </div>
+
+    <div>
+      <p class="footer-title">Le site</p>
+      <ul class="footer-list">
+        {mainNav.map((item) => <li><a href={item.href}>{item.label}</a></li>)}
+        <li><a href="/contact/">Contact et devis</a></li>
+      </ul>
+    </div>
+
+    <div>
+      <p class="footer-title">Zones d'intervention</p>
+      <ul class="footer-list">
+        {zones.map((zone) => <li><a href={`/zones/${zone.id}/`}>{zone.data.name}</a></li>)}
+        <li><a href="/zones/">Toutes nos zones</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="container-site footer-legal">
+    <p>
+      Assurance décennale : {aCompleter(insurance.insurer, 'assureur')}, contrat {aCompleter(insurance.policyNumber, 'n°')}.
+      Médiateur de la consommation : {
+        mediator.url ? (
+          <a href={mediator.url} rel="noopener" target="_blank">{mediator.name}</a>
+        ) : (
+          aCompleter(mediator.name, 'médiateur')
+        )
+      }.
+    </p>
+    <p class="footer-bottom">
+      <span>© {year} {site.name}</span>
+      {legalNav.map((item) => <a href={item.href}>{item.label}</a>)}
+    </p>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    padding-block: 4rem 2rem;
+  }
+
+  .footer-grid {
+    display: grid;
+    gap: 2.5rem;
+  }
+
+  @media (min-width: 768px) {
+    .footer-grid {
+      grid-template-columns: 1.4fr 1fr 1fr 1fr;
+    }
+  }
+
+  .footer-name {
+    font-family: var(--ff-display);
+    font-size: 1.75rem;
+    line-height: 1.1;
+  }
+
+  .footer-pitch {
+    margin-top: 1rem;
+    max-width: 22rem;
+    color: color-mix(in srgb, var(--platre) 78%, transparent);
+    font-size: 0.95rem;
+  }
+
+  .footer-title {
+    font-weight: 600;
+    margin-bottom: 0.8rem;
+    color: var(--laiton);
+    font-size: 0.95rem;
+  }
+
+  .footer-list {
+    display: grid;
+    gap: 0.45rem;
+    font-size: 0.95rem;
+  }
+
+  .footer-list a,
+  .footer-legal a {
+    text-decoration: none;
+    color: color-mix(in srgb, var(--platre) 88%, transparent);
+  }
+
+  .footer-list a:hover,
+  .footer-legal a:hover {
+    color: var(--platre);
+    text-decoration: underline;
+    text-decoration-color: var(--laiton);
+    text-underline-offset: 0.25em;
+  }
+
+  .footer-legal {
+    margin-top: 3rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid color-mix(in srgb, var(--platre) 15%, transparent);
+    font-size: 0.85rem;
+    color: color-mix(in srgb, var(--platre) 65%, transparent);
+    display: grid;
+    gap: 0.75rem;
+  }
+
+  .footer-bottom {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1.5rem;
+  }
+</style>

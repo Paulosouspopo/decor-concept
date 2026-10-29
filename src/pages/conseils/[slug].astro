@@ -1,0 +1,94 @@
+---
+import { getCollection, getEntry, render, type CollectionEntry } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import CtaBlock from '../../components/CtaBlock.astro';
+import { formatDate } from '../../lib/format';
+import { articleSchema } from '../../lib/schema';
+import { whatsappMessages } from '../../lib/contact';
+
+export async function getStaticPaths() {
+  const articles = (await getCollection('conseils')).filter((a) => !a.data.draft);
+  return articles.map((article) => ({ params: { slug: article.id }, props: { article } }));
+}
+
+interface Props {
+  article: CollectionEntry<'conseils'>;
+}
+
+const { article } = Astro.props;
+const { data } = article;
+const { Content } = await render(article);
+const service = data.service ? await getEntry('services', data.service) : undefined;
+const path = `/conseils/${article.id}/`;
+---
+
+<BaseLayout
+  title={data.title}
+  description={data.description}
+  type="article"
+  jsonLd={articleSchema({ title: data.title, description: data.description, path, date: data.date, updated: data.updated })}
+  whatsappMessage={whatsappMessages.devis}
+>
+  <article class="section">
+    <div class="container-site">
+      <Breadcrumbs
+        items={[
+          { name: 'Conseils', href: '/conseils/' },
+          { name: data.title, href: path },
+        ]}
+      />
+      <header class="article-head">
+        <h1>{data.title}</h1>
+        <p class="meta">
+          Publié le <time datetime={data.date.toISOString()}>{formatDate(data.date)}</time>
+          {data.updated && <span>, mis à jour le {formatDate(data.updated)}</span>}
+        </p>
+      </header>
+      <div class="prose-site">
+        <Content />
+      </div>
+      {
+        service && (
+          <aside class="related">
+            <p class="meta">Pour aller plus loin</p>
+            <a href={`/renovation/${service.id}/`} class="link related-link">
+              {service.data.title}
+            </a>
+          </aside>
+        )
+      }
+    </div>
+  </article>
+
+  <CtaBlock whatsappMessage={whatsappMessages.devis} tracking="fin-article" />
+</BaseLayout>
+
+<style>
+  .article-head {
+    margin-block: 2rem 2.5rem;
+    max-width: 46rem;
+  }
+
+  .article-head .meta {
+    margin-top: 1rem;
+  }
+
+  .article-head h1 {
+    font-size: clamp(2rem, 1.5rem + 2.2vw, 3.2rem);
+  }
+
+  .related {
+    margin-top: 3.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--pierre-fonce);
+    max-width: 42rem;
+  }
+
+  .related-link {
+    display: inline-block;
+    margin-top: 0.4rem;
+    font-family: var(--ff-display);
+    font-size: 1.35rem;
+  }
+</style>

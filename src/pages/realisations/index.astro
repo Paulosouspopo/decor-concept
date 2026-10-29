@@ -1,0 +1,172 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHero from '../../components/PageHero.astro';
+import ProjectCard from '../../components/ProjectCard.astro';
+import CtaBlock from '../../components/CtaBlock.astro';
+import { projectTypeLabels } from '../../lib/format';
+import { whatsappMessages } from '../../lib/contact';
+
+const projects = (await getCollection('realisations')).sort((a, b) => a.data.order - b.data.order);
+const zones = (await getCollection('zones')).sort((a, b) => a.data.order - b.data.order);
+
+// Filtres : seulement les types et secteurs réellement présents.
+const usedTypes = Object.keys(projectTypeLabels).filter((type) =>
+  projects.some((p) => (p.data.services as string[]).includes(type)),
+);
+const usedZones = zones.filter((zone) => projects.some((p) => p.data.zone === zone.id));
+---
+
+<BaseLayout
+  title="Nos réalisations de rénovation à Paris"
+  description="Appartements rénovés à Paris et dans l'ouest parisien : avant/après, surfaces, durées et corps d'état coordonnés pour chaque chantier."
+  whatsappMessage={whatsappMessages.devis}
+>
+  <PageHero
+    title="Nos réalisations"
+    lead="Chaque chantier est présenté avec sa surface, sa durée et les travaux réalisés. Cherchez un projet qui ressemble au vôtre."
+    crumbs={[{ name: 'Réalisations', href: '/realisations/' }]}
+  />
+
+  <section class="section">
+    <div class="container-site">
+      <div class="filters" data-filters>
+        <div class="filter-group" role="group" aria-label="Filtrer par type de travaux">
+          <span class="meta">Travaux</span>
+          <button type="button" class="filter is-active" data-filter-type="all" aria-pressed="true">Tous</button>
+          {
+            usedTypes.map((type) => (
+              <button type="button" class="filter" data-filter-type={type} aria-pressed="false">
+                {projectTypeLabels[type]}
+              </button>
+            ))
+          }
+        </div>
+        <div class="filter-group" role="group" aria-label="Filtrer par secteur">
+          <span class="meta">Secteur</span>
+          <button type="button" class="filter is-active" data-filter-zone="all" aria-pressed="true">Tous</button>
+          {
+            usedZones.map((zone) => (
+              <button type="button" class="filter" data-filter-zone={zone.id} aria-pressed="false">
+                {zone.data.name}
+              </button>
+            ))
+          }
+        </div>
+      </div>
+
+      <div class="grid" data-grid>
+        {projects.map((project) => <ProjectCard project={project} headingLevel="h2" />)}
+      </div>
+      <p class="empty" data-empty hidden>
+        Aucune réalisation ne correspond à ces filtres pour l'instant.
+        <a href="/contact/" class="link">Parlez-nous de votre projet</a>
+      </p>
+    </div>
+  </section>
+
+  <CtaBlock
+    title="Un projet comparable ?"
+    whatsappMessage={whatsappMessages.devis}
+    tracking="fin-realisations"
+  />
+</BaseLayout>
+
+<script>
+  const root = document.querySelector<HTMLElement>('[data-filters]');
+  const cards = Array.from(document.querySelectorAll<HTMLElement>('[data-grid] [data-project]'));
+  const empty = document.querySelector<HTMLElement>('[data-empty]');
+  let type = 'all';
+  let zone = 'all';
+
+  function apply() {
+    let visible = 0;
+    cards.forEach((card) => {
+      const services = (card.dataset.services ?? '').split(' ');
+      const show = (type === 'all' || services.includes(type)) && (zone === 'all' || card.dataset.zone === zone);
+      card.hidden = !show;
+      if (show) visible++;
+    });
+    if (empty) empty.hidden = visible > 0;
+  }
+
+  function select(buttons: NodeListOf<HTMLButtonElement>, active: HTMLButtonElement) {
+    buttons.forEach((b) => {
+      b.classList.toggle('is-active', b === active);
+      b.setAttribute('aria-pressed', String(b === active));
+    });
+  }
+
+  if (root) {
+    const typeButtons = root.querySelectorAll<HTMLButtonElement>('[data-filter-type]');
+    const zoneButtons = root.querySelectorAll<HTMLButtonElement>('[data-filter-zone]');
+    typeButtons.forEach((b) =>
+      b.addEventListener('click', () => {
+        type = b.dataset.filterType ?? 'all';
+        select(typeButtons, b);
+        apply();
+      }),
+    );
+    zoneButtons.forEach((b) =>
+      b.addEventListener('click', () => {
+        zone = b.dataset.filterZone ?? 'all';
+        select(zoneButtons, b);
+        apply();
+      }),
+    );
+  }
+</script>
+
+<style>
+  .filters {
+    display: grid;
+    gap: 1rem;
+    margin-bottom: 3rem;
+  }
+
+  .filter-group {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .filter-group .meta {
+    min-width: 4.5rem;
+  }
+
+  .filter {
+    padding: 0.45rem 0.85rem;
+    border: 1px solid var(--pierre-fonce);
+    border-radius: var(--radius);
+    font-size: 0.92rem;
+    background: transparent;
+    cursor: pointer;
+  }
+
+  .filter:hover {
+    border-color: var(--ardoise);
+  }
+
+  .filter.is-active {
+    background: var(--ardoise);
+    border-color: var(--ardoise);
+    color: var(--platre);
+  }
+
+  .grid {
+    display: grid;
+    gap: 3rem 2.5rem;
+  }
+
+  @media (min-width: 768px) {
+    .grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  .empty {
+    margin-top: 1rem;
+    color: var(--gris);
+  }
+</style>

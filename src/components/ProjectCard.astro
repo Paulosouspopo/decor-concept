@@ -1,0 +1,90 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import Photo from './Photo.astro';
+import { projectTypeLabels } from '../lib/format';
+
+interface Props {
+  project: CollectionEntry<'realisations'>;
+  size?: 'large' | 'normal';
+  headingLevel?: 'h2' | 'h3';
+}
+
+const { project, size = 'normal', headingLevel = 'h3' } = Astro.props;
+const { data } = project;
+const Heading = headingLevel;
+const image = data.cover ?? data.after;
+---
+
+<article
+  class:list={['project-card', size === 'large' && 'is-large']}
+  data-project
+  data-services={data.services.join(' ')}
+  data-zone={data.zone ?? ''}
+>
+  <a href={`/realisations/${project.id}/`} class="card-link">
+    <Photo
+      image={image}
+      alt={`${data.title}, ${data.location}`}
+      label={data.location}
+      ratio={size === 'large' ? '4 / 3' : '3 / 2'}
+      sizes={size === 'large' ? '(min-width: 1024px) 58vw, 100vw' : '(min-width: 1024px) 38vw, 100vw'}
+    />
+    <div class="card-body">
+      <p class="meta card-meta">
+        {data.location}, {data.surface} m², {data.duration}
+        {data.fictif && <span class="tag-exemple">Exemple</span>}
+      </p>
+      <Heading class="card-title">{data.title}</Heading>
+      <p class="card-summary">{data.summary}</p>
+      <p class="card-types">{data.services.map((s) => projectTypeLabels[s]).join(', ')}</p>
+    </div>
+  </a>
+</article>
+
+<style>
+  .card-link {
+    display: block;
+    text-decoration: none;
+  }
+
+  .card-body {
+    padding-top: 1rem;
+  }
+
+  .card-meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .card-title {
+    margin-top: 0.4rem;
+    font-family: var(--ff-display);
+    font-size: 1.4rem;
+    line-height: 1.25;
+  }
+
+  .is-large .card-title {
+    font-size: clamp(1.5rem, 1.2rem + 1vw, 2rem);
+  }
+
+  .card-link:hover .card-title {
+    text-decoration: underline;
+    text-decoration-color: var(--laiton);
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.2em;
+  }
+
+  .card-summary {
+    margin-top: 0.5rem;
+    color: var(--gris);
+    max-width: 34rem;
+  }
+
+  .card-types {
+    margin-top: 0.75rem;
+    font-size: 0.85rem;
+    color: var(--ardoise);
+  }
+</style>

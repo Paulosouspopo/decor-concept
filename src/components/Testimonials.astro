@@ -1,0 +1,105 @@
+---
+/**
+ * Avis clients. Les avis `source: 'exemple'` portent un marqueur visible.
+ * Obligation légale : indiquer d'où viennent les avis et s'ils sont contrôlés.
+ */
+import { getCollection } from 'astro:content';
+import { site } from '../config/site';
+
+interface Props {
+  limit?: number;
+}
+
+const { limit = 3 } = Astro.props;
+const avis = (await getCollection('avis')).sort((a, b) => a.data.order - b.data.order).slice(0, limit);
+const hasExamples = avis.some((a) => a.data.source === 'exemple');
+const sourceLabel = { google: 'Avis Google', client: 'Témoignage client', exemple: 'Exemple' } as const;
+---
+
+<div class="testimonials">
+  {
+    avis.map((item) => (
+      <figure class="testimonial">
+        {item.data.source === 'exemple' && <span class="tag-exemple">Exemple, à remplacer</span>}
+        <blockquote>
+          <p>{item.data.text}</p>
+        </blockquote>
+        <figcaption>
+          <span class="author">{item.data.author}</span>
+          <span class="meta">
+            {[item.data.project, item.data.location].filter(Boolean).join(', ')}
+          </span>
+          <span class="meta source">
+            {sourceLabel[item.data.source]}
+            {item.data.date && `, ${item.data.date}`}
+          </span>
+        </figcaption>
+      </figure>
+    ))
+  }
+</div>
+
+<p class="meta reviews-note">
+  {
+    hasExamples
+      ? 'Les avis affichés sur cette démonstration sont des exemples. Ils seront remplacés par des avis réels de clients.'
+      : 'Avis Google reproduits avec leur date, et témoignages validés par écrit par nos clients.'
+  }
+  {
+    site.links.googleReview && (
+      <a href={site.links.googleReview} class="link" target="_blank" rel="noopener" data-umami-event="clic-laisser-avis">
+        Laisser un avis sur Google
+      </a>
+    )
+  }
+</p>
+
+<style>
+  .testimonials {
+    display: grid;
+    gap: 1.5rem;
+  }
+
+  @media (min-width: 900px) {
+    .testimonials {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 2rem;
+    }
+  }
+
+  .testimonial {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    padding: 1.75rem;
+    background: var(--platre);
+    border-top: 2px solid var(--laiton);
+  }
+
+  .testimonial .tag-exemple {
+    align-self: flex-start;
+  }
+
+  blockquote {
+    font-family: var(--ff-display);
+    font-size: 1.2rem;
+    line-height: 1.45;
+    flex: 1;
+  }
+
+  figcaption {
+    display: grid;
+    gap: 0.15rem;
+  }
+
+  .author {
+    font-weight: 600;
+  }
+
+  .reviews-note {
+    margin-top: 1.5rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1rem;
+  }
+</style>

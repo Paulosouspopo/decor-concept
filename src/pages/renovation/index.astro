@@ -1,0 +1,91 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHero from '../../components/PageHero.astro';
+import ContactButtons from '../../components/ContactButtons.astro';
+import Photo from '../../components/Photo.astro';
+import CtaBlock from '../../components/CtaBlock.astro';
+import { whatsappMessages } from '../../lib/contact';
+
+const services = (await getCollection('services')).sort((a, b) => a.data.order - b.data.order);
+---
+
+<BaseLayout
+  title="Nos prestations de rénovation à Paris"
+  description="Rénovation complète d'appartement, appartement haussmannien, cuisine, salle de bain, menuiserie sur mesure : toutes nos prestations à Paris et dans l'ouest parisien."
+  whatsappMessage={whatsappMessages.devis}
+>
+  <PageHero
+    title="Nos prestations de rénovation"
+    lead="De la rénovation complète d'un appartement à une seule pièce, tous les corps d'état sont réunis dans une même équipe."
+    crumbs={[{ name: 'Rénovation', href: '/renovation/' }]}
+  >
+    <ContactButtons whatsappMessage={whatsappMessages.devis} tracking="renovation" />
+  </PageHero>
+
+  <section class="section">
+    <div class="container-site services">
+      {
+        services.map((service, index) => (
+          <article class:list={['service', index % 2 === 1 && 'is-reversed']}>
+            <Photo
+              image={service.data.cover}
+              alt={service.data.navTitle}
+              label={service.data.navTitle.toLowerCase()}
+              ratio="3 / 2"
+              sizes="(min-width: 1024px) 50vw, 100vw"
+            />
+            <div class="service-text">
+              <h2>{service.data.navTitle}</h2>
+              <p class="lead">{service.data.summary}</p>
+              {service.data.duration && <p class="meta">Durée type : {service.data.duration}</p>}
+              <p class="service-link">
+                <a href={`/renovation/${service.id}/`} class="btn btn-secondary">
+                  Découvrir : {service.data.navTitle.toLowerCase()}
+                </a>
+              </p>
+            </div>
+          </article>
+        ))
+      }
+    </div>
+  </section>
+
+  <CtaBlock whatsappMessage={whatsappMessages.devis} />
+</BaseLayout>
+
+<style>
+  .services {
+    display: grid;
+    gap: 4.5rem;
+  }
+
+  .service {
+    display: grid;
+    gap: 1.75rem;
+    align-items: center;
+  }
+
+  @media (min-width: 900px) {
+    .service {
+      grid-template-columns: 1fr 1fr;
+      gap: 4rem;
+    }
+
+    .service.is-reversed > :first-child {
+      order: 2;
+    }
+  }
+
+  .service-text .lead {
+    margin-top: 1rem;
+  }
+
+  .service-text .meta {
+    margin-top: 1rem;
+  }
+
+  .service-link {
+    margin-top: 1.75rem;
+  }
+</style>

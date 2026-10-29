@@ -1,0 +1,134 @@
+---
+/**
+ * Photo du site.
+ *
+ * - Si `image` est fourni (import depuis src/assets ou champ image() d'une
+ *   collection), on affiche une image optimisée (AVIF/WebP, tailles adaptées).
+ * - Sinon, on affiche un emplacement graphique sobre (« photo à venir »),
+ *   pour que la démo reste présentable sans photos.
+ *
+ * Passage en V1 : il suffit de renseigner les champs image des contenus,
+ * aucun gabarit n'est à modifier.
+ */
+import type { ImageMetadata } from 'astro';
+import { Image } from 'astro:assets';
+
+interface Props {
+  image?: ImageMetadata;
+  alt: string;
+  /** Texte de l'emplacement quand il n'y a pas encore de photo. */
+  label?: string;
+  /** Ambiance de l'emplacement : avant (chantier), après (fini) ou neutre. */
+  tone?: 'avant' | 'apres' | 'neutre';
+  /** Ratio largeur/hauteur, ex. '4 / 3', '3 / 4', '16 / 10'. */
+  ratio?: string;
+  sizes?: string;
+  loading?: 'lazy' | 'eager';
+  /** Position du texte de l'emplacement (utile pour le curseur avant/après). */
+  labelAlign?: 'left' | 'right';
+  class?: string;
+}
+
+const {
+  image,
+  alt,
+  label,
+  tone = 'apres',
+  ratio = '4 / 3',
+  sizes = '(min-width: 1024px) 50vw, 100vw',
+  loading = 'lazy',
+  labelAlign = 'left',
+  class: className,
+} = Astro.props;
+---
+
+{
+  image ? (
+    <Image
+      src={image}
+      alt={alt}
+      widths={[480, 800, 1200, 1600]}
+      sizes={sizes}
+      loading={loading}
+      class:list={['photo', className]}
+      style={`aspect-ratio: ${ratio}`}
+    />
+  ) : (
+    <div class:list={['photo', 'placeholder', `tone-${tone}`, className]} style={`aspect-ratio: ${ratio}`} role="img" aria-label={alt}>
+      <span class="moulure" aria-hidden="true" />
+      <span class:list={['placeholder-label', labelAlign === 'right' && 'label-right']} aria-hidden="true">
+        Photo à venir{label ? ` : ${label}` : ''}
+      </span>
+    </div>
+  )
+}
+
+<style>
+  /* :global car <Image> est un composant : le style scopé ne l'atteindrait pas */
+  :global(.photo) {
+    display: block;
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+    border-radius: var(--radius);
+  }
+
+  .placeholder {
+    position: relative;
+    overflow: hidden;
+    background-color: var(--pierre);
+  }
+
+  /* Après : mur clair avec un cadre de moulure (boiserie haussmannienne) */
+  .tone-apres {
+    background-color: #e8e5dd;
+    background-image: linear-gradient(160deg, rgba(255, 255, 255, 0.55), rgba(255, 255, 255, 0) 55%);
+  }
+
+  .tone-apres .moulure {
+    position: absolute;
+    inset: 14% 18%;
+    border: 1px solid color-mix(in srgb, var(--laiton) 55%, transparent);
+    box-shadow:
+      inset 0 0 0 7px #e8e5dd,
+      inset 0 0 0 8px color-mix(in srgb, var(--laiton) 35%, transparent);
+  }
+
+  /* Avant : hachures de plan, comme une coupe sur un dessin d'architecte */
+  .tone-avant {
+    background-color: #cdc7ba;
+    background-image: repeating-linear-gradient(
+      45deg,
+      rgba(30, 36, 40, 0.1) 0 1px,
+      transparent 1px 10px
+    );
+  }
+
+  .tone-avant .moulure {
+    display: none;
+  }
+
+  .tone-neutre {
+    background-color: var(--pierre);
+  }
+
+  .tone-neutre .moulure {
+    position: absolute;
+    inset: 12%;
+    border: 1px solid color-mix(in srgb, var(--ardoise) 12%, transparent);
+  }
+
+  .placeholder-label {
+    position: absolute;
+    left: 0.9rem;
+    bottom: 0.75rem;
+    right: 0.9rem;
+    font-size: 0.8rem;
+    line-height: 1.3;
+    color: color-mix(in srgb, var(--ardoise) 72%, transparent);
+  }
+
+  .label-right {
+    text-align: right;
+  }
+</style>

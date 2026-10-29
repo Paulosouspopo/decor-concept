@@ -1,0 +1,52 @@
+---
+/**
+ * En-tête des pages intérieures : fil d'Ariane, H1, chapeau, actions.
+ */
+import Breadcrumbs from './Breadcrumbs.astro';
+
+interface Props {
+  title: string;
+  lead?: string;
+  crumbs: { name: string; href: string }[];
+}
+
+const { title, lead, crumbs } = Astro.props;
+---
+
+<section class="page-hero">
+  <div class="container-site">
+    <Breadcrumbs items={crumbs} />
+    <h1>{title}</h1>
+    {lead && <p class="lead">{lead}</p>}
+    {Astro.slots.has('default') && <div class="hero-actions"><slot /></div>}
+  </div>
+</section>
+
+<style>
+  .page-hero {
+    padding-block: 2.5rem 3.5rem;
+    border-bottom: 1px solid var(--pierre);
+  }
+
+  @media (min-width: 768px) {
+    .page-hero {
+      padding-block: 3.5rem 4.5rem;
+    }
+  }
+
+  h1 {
+    margin-top: 1.75rem;
+    max-width: 18em;
+  }
+
+  .lead {
+    margin-top: 1.25rem;
+  }
+
+  .hero-actions {
+    margin-top: 2rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+</style>

@@ -1,0 +1,150 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHero from '../../components/PageHero.astro';
+import QuoteForm from '../../components/QuoteForm.astro';
+import Faq from '../../components/Faq.astro';
+import Icon from '../../components/Icon.astro';
+import { site } from '../../config/site';
+import { faqGenerale } from '../../data/faq';
+import { localBusinessSchema } from '../../lib/schema';
+import { phoneLink, emailLink, whatsappLink, whatsappMessages } from '../../lib/contact';
+---
+
+<BaseLayout
+  title="Contact et demande de devis"
+  description={`Demandez un devis pour la rénovation de votre appartement à Paris : WhatsApp, téléphone ou formulaire. Réponse ${site.contact.responseDelay}.`}
+  jsonLd={localBusinessSchema()}
+  whatsappMessage={whatsappMessages.devis}
+>
+  <PageHero
+    title="Parlons de votre projet"
+    lead={`Décrivez-nous votre appartement et ce que vous souhaitez faire. Nous vous rappelons ${site.contact.responseDelay} pour organiser une visite sur place.`}
+    crumbs={[{ name: 'Contact et devis', href: '/contact/' }]}
+  />
+
+  <section class="section">
+    <div class="container-site contact-grid">
+      <div id="devis">
+        <h2 class="form-title">Demande de devis</h2>
+        <QuoteForm />
+      </div>
+
+      <aside class="direct">
+        <h2 class="direct-title">Nous joindre directement</h2>
+        <ul class="direct-list">
+          <li>
+            <a href={whatsappLink(whatsappMessages.devis)} target="_blank" rel="noopener" class="direct-item" data-umami-event="clic-whatsapp-contact">
+              <Icon name="whatsapp" class="direct-icon" />
+              <span>
+                <strong>WhatsApp</strong>
+                <span class="meta">Le plus simple pour envoyer des photos et des plans</span>
+              </span>
+            </a>
+          </li>
+          <li>
+            <a href={phoneLink} class="direct-item" data-umami-event="clic-telephone-contact">
+              <Icon name="phone" class="direct-icon" />
+              <span>
+                <strong>{site.contact.phoneDisplay}</strong>
+                <span class="meta">{site.contact.hours}</span>
+              </span>
+            </a>
+          </li>
+          <li>
+            <a href={emailLink} class="direct-item" data-umami-event="clic-email-contact">
+              <Icon name="mail" class="direct-icon" />
+              <span>
+                <strong>{site.contact.email}</strong>
+                <span class="meta">Réponse {site.contact.responseDelay}</span>
+              </span>
+            </a>
+          </li>
+          <li class="direct-item">
+            <Icon name="pin" class="direct-icon" />
+            <span>
+              <strong>Paris et ouest parisien</strong>
+              <span class="meta">{site.areaServed.join(', ')}</span>
+            </span>
+          </li>
+        </ul>
+      </aside>
+    </div>
+  </section>
+
+  <section class="section section-pierre">
+    <div class="container-site faq-grid">
+      <h2>Questions fréquentes</h2>
+      <Faq items={faqGenerale} />
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .contact-grid {
+    display: grid;
+    gap: 3.5rem;
+  }
+
+  @media (min-width: 1000px) {
+    .contact-grid {
+      grid-template-columns: 1.6fr 1fr;
+      gap: 5rem;
+      align-items: start;
+    }
+
+    .direct {
+      position: sticky;
+      top: 6.5rem;
+    }
+  }
+
+  .form-title,
+  .direct-title {
+    font-size: clamp(1.6rem, 1.35rem + 0.9vw, 2.1rem);
+    margin-bottom: 1.75rem;
+  }
+
+  .direct-list {
+    border-top: 1px solid var(--ardoise);
+  }
+
+  .direct-item {
+    display: grid;
+    grid-template-columns: 1.4rem 1fr;
+    gap: 1rem;
+    padding-block: 1.1rem;
+    border-bottom: 1px solid var(--pierre-fonce);
+    text-decoration: none;
+  }
+
+  .direct-item > span {
+    display: grid;
+    gap: 0.15rem;
+  }
+
+  .direct-item :global(.direct-icon) {
+    width: 1.4rem;
+    height: 1.4rem;
+    margin-top: 0.15rem;
+    color: var(--vert);
+  }
+
+  a.direct-item:hover strong {
+    text-decoration: underline;
+    text-decoration-color: var(--laiton);
+    text-underline-offset: 0.25em;
+  }
+
+  .faq-grid {
+    display: grid;
+    gap: 2rem;
+  }
+
+  @media (min-width: 900px) {
+    .faq-grid {
+      grid-template-columns: 0.7fr 1.3fr;
+      gap: 4rem;
+      align-items: start;
+    }
+  }
+</style>

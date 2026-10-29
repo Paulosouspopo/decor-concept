@@ -1,0 +1,190 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHero from '../components/PageHero.astro';
+import Photo from '../components/Photo.astro';
+import CtaBlock from '../components/CtaBlock.astro';
+import { site, aCompleter } from '../config/site';
+import { whatsappMessages } from '../lib/contact';
+
+/*
+ * À COMPLÉTER avec le client (voir docs/passage-demo-v1.md) :
+ * prénom et nom du fondateur, année de création, parcours, rôles de l'équipe,
+ * labels et adhésions. L'évocation de ses origines est à son choix.
+ */
+const equipe = [
+  { role: 'Le fondateur', text: 'Il suit chaque projet, du premier rendez-vous à la réception.' },
+  { role: 'Conducteur de travaux', text: 'Votre interlocuteur au quotidien, joignable directement.' },
+  { role: "Chefs d'équipe", text: 'Ils organisent le chantier et veillent aux finitions.' },
+  { role: 'Compagnons', text: 'Maçons, plaquistes, électriciens, plombiers, menuisiers, carreleurs, peintres.' },
+];
+
+const { insurance } = site.legal;
+---
+
+<BaseLayout
+  title="L'entreprise : 30 ans de rénovation à Paris"
+  description="Decor Concept, entreprise générale de rénovation fondée par un homme de métier : 30 ans de chantiers parisiens, sa propre équipe, assurance décennale."
+  whatsappMessage={whatsappMessages.devis}
+>
+  <PageHero
+    title="Trente ans de chantiers parisiens"
+    lead="Decor Concept a été fondée par un homme de métier, qui a appris la rénovation sur les chantiers avant de diriger sa propre équipe."
+    crumbs={[{ name: "L'entreprise", href: '/entreprise/' }]}
+  />
+
+  <section class="section">
+    <div class="container-site story">
+      <Photo
+        alt="Le fondateur de Decor Concept"
+        label="portrait du fondateur"
+        tone="neutre"
+        ratio="4 / 5"
+        sizes="(min-width: 900px) 40vw, 100vw"
+      />
+      <div class="prose-site">
+        <h2>De l'ouvrier au chef d'entreprise</h2>
+        <p>
+          Il a commencé comme ouvrier, à apprendre les gestes de chaque métier sur les chantiers de Paris. Au fil des
+          années, il a pris la conduite des travaux, puis fondé Decor Concept pour faire les chantiers comme il pensait
+          qu'ils devaient être faits.
+        </p>
+        <p>
+          Trente ans plus tard, l'entreprise compte {site.facts.teamSize} et s'est fait un nom par le bouche-à-oreille,
+          d'un client à l'autre, d'un immeuble à l'autre.
+        </p>
+        <h2>Ce que nous défendons</h2>
+        <p>
+          <strong>Le travail bien fait</strong>, y compris là où il ne se voit pas : une étanchéité, une gaine
+          électrique, un support bien dressé avant la pose.
+        </p>
+        <p>
+          <strong>La transparence</strong> : un devis lisible, un planning écrit, et des nouvelles chaque semaine, bonnes
+          ou moins bonnes.
+        </p>
+        <p>
+          <strong>Le respect</strong> de votre appartement, de votre immeuble et de vos voisins.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section-pierre">
+    <div class="container-site">
+      <h2 class="block-title">Une équipe, du début à la fin</h2>
+      <ul class="team">
+        {
+          equipe.map((member) => (
+            <li>
+              <Photo alt={member.role} label={member.role.toLowerCase()} tone="neutre" ratio="1 / 1" sizes="(min-width: 900px) 25vw, 50vw" />
+              <h3>{member.role}</h3>
+              <p>{member.text}</p>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container-site guarantees">
+      <h2>Assurances et garanties</h2>
+      <dl>
+        <div>
+          <dt>Assurance décennale</dt>
+          <dd>
+            {aCompleter(insurance.insurer, 'assureur')}, contrat {aCompleter(insurance.policyNumber, 'n°')}, couverture
+            {' '}{aCompleter(insurance.coverage, 'zone couverte')}. Attestation jointe à chaque devis.
+          </dd>
+        </div>
+        <div>
+          <dt>Responsabilité civile professionnelle</dt>
+          <dd>Attestation jointe à chaque devis.</dd>
+        </div>
+        <div>
+          <dt>Garanties légales</dt>
+          <dd>Garantie de parfait achèvement, garantie biennale de bon fonctionnement, garantie décennale.</dd>
+        </div>
+        <div>
+          <dt>Labels et adhésions</dt>
+          <dd>[À compléter : Qualibat, RGE, CAPEB, FFB…]</dd>
+        </div>
+      </dl>
+    </div>
+  </section>
+
+  <CtaBlock whatsappMessage={whatsappMessages.devis} tracking="fin-entreprise" />
+</BaseLayout>
+
+<style>
+  .story {
+    display: grid;
+    gap: 3rem;
+  }
+
+  @media (min-width: 900px) {
+    .story {
+      grid-template-columns: 0.8fr 1fr;
+      gap: 5rem;
+      align-items: start;
+    }
+  }
+
+  .story .prose-site h2:first-child {
+    margin-top: 0;
+  }
+
+  .block-title {
+    margin-bottom: 2.5rem;
+  }
+
+  .team {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 2.5rem 1.5rem;
+  }
+
+  @media (min-width: 900px) {
+    .team {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 2rem;
+    }
+  }
+
+  .team h3 {
+    margin-top: 1rem;
+    font-size: 1.3rem;
+  }
+
+  .team p {
+    margin-top: 0.4rem;
+    color: var(--gris);
+    font-size: 0.95rem;
+  }
+
+  .guarantees dl {
+    margin-top: 2rem;
+    border-top: 1px solid var(--ardoise);
+  }
+
+  .guarantees dl > div {
+    display: grid;
+    gap: 0.4rem;
+    padding-block: 1.25rem;
+    border-bottom: 1px solid var(--pierre-fonce);
+  }
+
+  @media (min-width: 900px) {
+    .guarantees dl > div {
+      grid-template-columns: 18rem 1fr;
+      gap: 2rem;
+    }
+  }
+
+  .guarantees dt {
+    font-weight: 600;
+  }
+
+  .guarantees dd {
+    color: var(--gris);
+  }
+</style>

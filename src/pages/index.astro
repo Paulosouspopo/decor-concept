@@ -1,0 +1,507 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import BeforeAfter from '../components/BeforeAfter.astro';
+import ContactButtons from '../components/ContactButtons.astro';
+import ProjectCard from '../components/ProjectCard.astro';
+import ProcessSteps from '../components/ProcessSteps.astro';
+import Testimonials from '../components/Testimonials.astro';
+import Faq from '../components/Faq.astro';
+import CtaBlock from '../components/CtaBlock.astro';
+import Photo from '../components/Photo.astro';
+import { site } from '../config/site';
+import { faqGenerale } from '../data/faq';
+import { localBusinessSchema } from '../lib/schema';
+import { whatsappMessages } from '../lib/contact';
+
+const services = (await getCollection('services')).sort((a, b) => a.data.order - b.data.order);
+const projects = (await getCollection('realisations')).sort((a, b) => a.data.order - b.data.order);
+const featured = projects.filter((p) => p.data.featured).slice(0, 3);
+const hero = featured[0] ?? projects[0];
+const zones = (await getCollection('zones')).sort((a, b) => a.data.order - b.data.order);
+const zoneIds = new Set(zones.map((z) => z.id));
+
+// Zones listées sur l'accueil. Une page n'existe que pour les secteurs illustrés par un chantier.
+const zoneSlug: Record<string, string> = {
+  'Paris 16e': 'paris-16',
+  'Paris 17e': 'paris-17',
+  'Neuilly-sur-Seine': 'neuilly-sur-seine',
+  'Boulogne-Billancourt': 'boulogne-billancourt',
+};
+---
+
+<BaseLayout
+  title={`${site.name}, rénovation complète d'appartements à Paris`}
+  description={site.description}
+  jsonLd={localBusinessSchema()}
+  whatsappMessage={whatsappMessages.devis}
+>
+  <!-- Hero : le texte à gauche, la transformation à droite -->
+  <section class="hero">
+    <div class="container-site hero-grid">
+      <div class="hero-text">
+        <h1>Rénovation complète d'appartements à Paris</h1>
+        <p class="hero-promise">30 ans de métier, une seule équipe, aucune surprise.</p>
+        <p class="lead">
+          Decor Concept rénove de A à Z les appartements de Paris et de l'ouest parisien, de la démolition aux
+          finitions, avec ses propres compagnons et un interlocuteur unique.
+        </p>
+        <div class="hero-actions">
+          <ContactButtons whatsappMessage={whatsappMessages.devis} tracking="hero" />
+        </div>
+      </div>
+      {
+        hero && (
+          <figure class="hero-visual">
+            <BeforeAfter
+              before={hero.data.before}
+              after={hero.data.after}
+              subject={`${hero.data.location}, ${hero.data.surface} m²`}
+              ratio="4 / 5"
+              sizes="(min-width: 1024px) 50vw, 100vw"
+              loading="eager"
+            />
+            <figcaption class="meta">
+              Faites glisser pour comparer.{' '}
+              <a href={`/realisations/${hero.id}/`} class="link">
+                {hero.data.title}
+              </a>
+              {hero.data.fictif && <span class="tag-exemple">Exemple</span>}
+            </figcaption>
+          </figure>
+        )
+      }
+    </div>
+  </section>
+
+  <!-- Preuves -->
+  <section class="proofs" aria-label="En bref">
+    <ul class="container-site proofs-list">
+      <li><strong>{site.facts.yearsOfExperience} ans</strong> sur les chantiers parisiens</li>
+      <li><strong>Notre propre équipe</strong>{site.facts.teamSize}, du début à la fin du chantier</li>
+      <li><strong>Un seul interlocuteur</strong> du devis à la réception</li>
+      <li><strong>Assurance décennale</strong>, attestation jointe à chaque devis</li>
+    </ul>
+  </section>
+
+  <!-- Services -->
+  <section class="section">
+    <div class="container-site">
+      <div class="section-head">
+        <h2>Ce que nous rénovons</h2>
+        <p class="lead">
+          Une rénovation complète ou une seule pièce : chaque projet est mené par la même équipe, avec le même soin.
+        </p>
+      </div>
+      <ul class="service-list">
+        {
+          services.map((service) => (
+            <li>
+              <a href={`/renovation/${service.id}/`} class="service-row">
+                <span class="service-name">{service.data.navTitle}</span>
+                <span class="service-summary">{service.data.summary}</span>
+                <span class="service-more">Voir le détail</span>
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <!-- Réalisations -->
+  <section class="section section-pierre">
+    <div class="container-site">
+      <div class="section-head section-head-row">
+        <h2>Réalisations récentes</h2>
+        <a href="/realisations/" class="link">Toutes les réalisations</a>
+      </div>
+      <div class="projects-grid">
+        {featured.map((project, index) => <ProjectCard project={project} size={index === 0 ? 'large' : 'normal'} />)}
+      </div>
+    </div>
+  </section>
+
+  <!-- Méthode -->
+  <section class="section section-ardoise">
+    <div class="container-site">
+      <div class="section-head">
+        <h2>Comment se déroule votre chantier</h2>
+        <p class="lead">
+          Pas de forfait opaque ni de calendrier flou : un devis détaillé, un planning écrit, et chaque semaine un point
+          d'avancement avec photos.
+        </p>
+      </div>
+      <ProcessSteps />
+      <p class="section-foot"><a href="/methode/" class="link">Notre méthode et notre charte chantier</a></p>
+    </div>
+  </section>
+
+  <!-- Le fondateur -->
+  <section class="section">
+    <div class="container-site founder">
+      <Photo
+        alt="Le fondateur de Decor Concept sur un chantier"
+        label="portrait du fondateur sur chantier"
+        tone="neutre"
+        ratio="4 / 5"
+        sizes="(min-width: 1024px) 40vw, 100vw"
+        class="founder-photo"
+      />
+      <div class="founder-text">
+        <h2>Un fondateur qui connaît chaque geste</h2>
+        <div class="prose-site">
+          <p>
+            Il a commencé sur les chantiers comme ouvrier. Trente ans plus tard, il dirige {site.facts.teamSize} et suit
+            lui-même chaque projet.
+          </p>
+          <p>
+            Cette expérience change tout sur un chantier : il sait ce que demande chaque étape, combien de temps elle prend
+            vraiment, et ce qui distingue un travail correct d'un travail bien fait.
+          </p>
+        </div>
+        <p class="founder-link"><a href="/entreprise/" class="link">Notre histoire et notre équipe</a></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Avis -->
+  <section class="section section-pierre">
+    <div class="container-site">
+      <div class="section-head">
+        <h2>Ce que disent nos clients</h2>
+      </div>
+      <Testimonials />
+    </div>
+  </section>
+
+  <!-- Zones -->
+  <section class="section">
+    <div class="container-site zones">
+      <div>
+        <h2>Où nous intervenons</h2>
+        <p class="lead">
+          Paris et l'ouest parisien, là où se trouvent la plupart de nos chantiers. Pour un projet ailleurs en
+          Île-de-France, contactez-nous : nous étudions chaque demande.
+        </p>
+      </div>
+      <ul class="zone-list">
+        {
+          site.areaServed.map((area) => {
+            const slug = zoneSlug[area];
+            return (
+              <li>
+                {slug && zoneIds.has(slug) ? (
+                  <a href={`/zones/${slug}/`} class="link">
+                    {area}
+                  </a>
+                ) : (
+                  <span>{area}</span>
+                )}
+              </li>
+            );
+          })
+        }
+      </ul>
+    </div>
+  </section>
+
+  <!-- Architectes -->
+  <section class="architects">
+    <div class="container-site architects-inner">
+      <div>
+        <h2>Architectes et décorateurs</h2>
+        <p>
+          Vous concevez, nous réalisons. Respect de vos plans, un chef de chantier dédié et un point chaque semaine, pour
+          vous comme pour votre client.
+        </p>
+      </div>
+      <a href="/architectes/" class="btn btn-outline-light">Travailler ensemble</a>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="section">
+    <div class="container-site faq-grid">
+      <h2>Questions fréquentes</h2>
+      <Faq items={faqGenerale} />
+    </div>
+  </section>
+
+  <CtaBlock whatsappMessage={whatsappMessages.devis} />
+</BaseLayout>
+
+<style>
+  /* Hero */
+  .hero {
+    padding-block: 2.5rem 3.5rem;
+  }
+
+  .hero-grid {
+    display: grid;
+    gap: 2.5rem;
+    align-items: center;
+  }
+
+  @media (min-width: 1024px) {
+    .hero {
+      padding-block: 4rem 5rem;
+    }
+
+    .hero-grid {
+      grid-template-columns: 1fr 1fr;
+      gap: 4rem;
+    }
+  }
+
+  .hero-text h1 {
+    max-width: 11em;
+  }
+
+  .hero-promise {
+    margin-top: 1.25rem;
+    font-family: var(--ff-display);
+    font-size: clamp(1.3rem, 1.1rem + 0.8vw, 1.7rem);
+    line-height: 1.3;
+    color: var(--vert);
+  }
+
+  .hero-text .lead {
+    margin-top: 1rem;
+  }
+
+  .hero-actions {
+    margin-top: 2rem;
+  }
+
+  .hero-visual figcaption {
+    margin-top: 0.75rem;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.4rem 0.6rem;
+  }
+
+  /* Preuves */
+  .proofs {
+    border-block: 1px solid var(--pierre-fonce);
+  }
+
+  .proofs-list {
+    display: grid;
+    gap: 0;
+  }
+
+  .proofs-list li {
+    padding-block: 1.1rem;
+    font-size: 0.98rem;
+    color: var(--gris);
+  }
+
+  .proofs-list li + li {
+    border-top: 1px solid var(--pierre);
+  }
+
+  .proofs-list strong {
+    display: block;
+    color: var(--ardoise);
+    font-weight: 600;
+  }
+
+  @media (min-width: 900px) {
+    .proofs-list {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    .proofs-list li {
+      padding: 1.6rem 1.5rem;
+    }
+
+    .proofs-list li:first-child {
+      padding-left: 0;
+    }
+
+    .proofs-list li + li {
+      border-top: 0;
+      border-left: 1px solid var(--pierre-fonce);
+    }
+  }
+
+  /* En-têtes de section */
+  .section-head {
+    margin-bottom: 3rem;
+  }
+
+  .section-head .lead {
+    margin-top: 1rem;
+  }
+
+  .section-head-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  .section-foot {
+    margin-top: 3rem;
+  }
+
+  /* Liste des services */
+  .service-list {
+    border-top: 1px solid var(--ardoise);
+  }
+
+  .service-row {
+    display: grid;
+    gap: 0.4rem;
+    padding-block: 1.5rem;
+    border-bottom: 1px solid var(--pierre-fonce);
+    text-decoration: none;
+  }
+
+  @media (min-width: 900px) {
+    .service-row {
+      grid-template-columns: 1fr 1.6fr auto;
+      align-items: baseline;
+      gap: 2rem;
+      padding-block: 1.9rem;
+    }
+  }
+
+  .service-name {
+    font-family: var(--ff-display);
+    font-size: clamp(1.5rem, 1.25rem + 0.9vw, 2rem);
+    line-height: 1.15;
+  }
+
+  .service-summary {
+    color: var(--gris);
+  }
+
+  .service-more {
+    font-size: 0.9rem;
+    font-weight: 600;
+    text-decoration: underline;
+    text-decoration-color: var(--laiton);
+    text-underline-offset: 0.25em;
+  }
+
+  .service-row:hover .service-name {
+    color: var(--vert);
+  }
+
+  /* Réalisations */
+  .projects-grid {
+    display: grid;
+    gap: 3rem;
+  }
+
+  @media (min-width: 1024px) {
+    .projects-grid {
+      grid-template-columns: 1.45fr 1fr;
+      grid-template-rows: auto auto;
+      column-gap: 3.5rem;
+      row-gap: 3rem;
+    }
+
+    .projects-grid > :global(:first-child) {
+      grid-row: span 2;
+    }
+  }
+
+  /* Fondateur */
+  .founder {
+    display: grid;
+    gap: 2.5rem;
+    align-items: center;
+  }
+
+  @media (min-width: 900px) {
+    .founder {
+      grid-template-columns: 0.85fr 1fr;
+      gap: 5rem;
+    }
+  }
+
+  .founder-text h2 {
+    margin-bottom: 1.5rem;
+    max-width: 14em;
+  }
+
+  .founder-link {
+    margin-top: 1.75rem;
+  }
+
+  /* Zones */
+  .zones {
+    display: grid;
+    gap: 2.5rem;
+  }
+
+  @media (min-width: 900px) {
+    .zones {
+      grid-template-columns: 1fr 1fr;
+      gap: 5rem;
+      align-items: start;
+    }
+  }
+
+  .zones .lead {
+    margin-top: 1rem;
+  }
+
+  .zone-list {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    border-top: 1px solid var(--pierre-fonce);
+  }
+
+  .zone-list li {
+    padding-block: 0.85rem;
+    border-bottom: 1px solid var(--pierre-fonce);
+    font-family: var(--ff-display);
+    font-size: 1.2rem;
+  }
+
+  /* Architectes */
+  .architects {
+    background: var(--vert);
+    color: var(--platre);
+    padding-block: 3.5rem;
+  }
+
+  .architects-inner {
+    display: grid;
+    gap: 1.75rem;
+    align-items: center;
+  }
+
+  @media (min-width: 900px) {
+    .architects-inner {
+      grid-template-columns: 1fr auto;
+      gap: 4rem;
+    }
+  }
+
+  .architects p {
+    margin-top: 0.75rem;
+    max-width: 40rem;
+    color: color-mix(in srgb, var(--platre) 80%, transparent);
+  }
+
+  /* FAQ */
+  .faq-grid {
+    display: grid;
+    gap: 2rem;
+  }
+
+  @media (min-width: 900px) {
+    .faq-grid {
+      grid-template-columns: 0.7fr 1.3fr;
+      gap: 4rem;
+      align-items: start;
+    }
+  }
+</style>

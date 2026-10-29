@@ -1,0 +1,25 @@
+---
+import { site } from '../config/site';
+---
+
+{
+  site.demo && (
+    <div class="demo-banner" role="note">
+      <p class="container-site">
+        Site de démonstration : les réalisations, avis et photos sont des exemples en attente des contenus réels.
+      </p>
+    </div>
+  )
+}
+
+<style>
+  .demo-banner {
+    background: var(--laiton);
+    color: var(--ardoise);
+    font-size: 0.85rem;
+    font-weight: 600;
+    line-height: 1.4;
+    padding-block: 0.5rem;
+    text-align: center;
+  }
+</style>

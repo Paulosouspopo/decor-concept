@@ -1,0 +1,74 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHero from '../../components/PageHero.astro';
+import CtaBlock from '../../components/CtaBlock.astro';
+import { formatDate } from '../../lib/format';
+import { whatsappMessages } from '../../lib/contact';
+
+const articles = (await getCollection('conseils'))
+  .filter((a) => !a.data.draft)
+  .sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+---
+
+<BaseLayout
+  title="Conseils pour rénover un appartement à Paris"
+  description="Copropriété, devis, durée des travaux, appartements haussmanniens : nos conseils pour préparer la rénovation de votre appartement à Paris."
+  whatsappMessage={whatsappMessages.devis}
+>
+  <PageHero
+    title="Conseils de rénovation"
+    lead="Ce que nous expliquons à nos clients avant chaque chantier, mis par écrit pour vous aider à préparer le vôtre."
+    crumbs={[{ name: 'Conseils', href: '/conseils/' }]}
+  />
+
+  <section class="section">
+    <div class="container-site">
+      <ul class="articles">
+        {
+          articles.map((article) => (
+            <li>
+              <a href={`/conseils/${article.id}/`} class="article">
+                <time class="meta" datetime={article.data.date.toISOString()}>
+                  {formatDate(article.data.date)}
+                </time>
+                <h2 class="article-title">{article.data.title}</h2>
+                <p class="article-desc">{article.data.description}</p>
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <CtaBlock whatsappMessage={whatsappMessages.devis} tracking="fin-conseils" />
+</BaseLayout>
+
+<style>
+  .articles {
+    border-top: 1px solid var(--ardoise);
+    max-width: 52rem;
+  }
+
+  .article {
+    display: grid;
+    gap: 0.5rem;
+    padding-block: 2rem;
+    border-bottom: 1px solid var(--pierre-fonce);
+    text-decoration: none;
+  }
+
+  .article-title {
+    font-size: clamp(1.5rem, 1.25rem + 0.9vw, 2rem);
+  }
+
+  .article:hover .article-title {
+    color: var(--vert);
+  }
+
+  .article-desc {
+    color: var(--gris);
+    max-width: 42rem;
+  }
+</style>

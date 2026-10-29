@@ -1,0 +1,41 @@
+---
+/**
+ * Les deux appels à l'action standard : devis (formulaire) + WhatsApp.
+ * `variant="dark"` pour les sections sur fond ardoise ou vert.
+ */
+import Icon from './Icon.astro';
+import { whatsappLink } from '../lib/contact';
+
+interface Props {
+  whatsappMessage?: string;
+  variant?: 'light' | 'dark';
+  devisLabel?: string;
+  tracking?: string;
+}
+
+const { whatsappMessage, variant = 'light', devisLabel = 'Demander un devis', tracking = 'section' } = Astro.props;
+const primary = variant === 'dark' ? 'btn btn-light' : 'btn btn-primary';
+const secondary = variant === 'dark' ? 'btn btn-outline-light' : 'btn btn-secondary';
+---
+
+<div class="contact-buttons">
+  <a href="/contact/" class={primary} data-umami-event={`clic-devis-${tracking}`}>{devisLabel}</a>
+  <a
+    href={whatsappLink(whatsappMessage)}
+    class={secondary}
+    target="_blank"
+    rel="noopener"
+    data-umami-event={`clic-whatsapp-${tracking}`}
+  >
+    <Icon name="whatsapp" />
+    Écrire sur WhatsApp
+  </a>
+</div>
+
+<style>
+  .contact-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+</style>

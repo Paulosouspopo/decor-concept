@@ -1,0 +1,92 @@
+---
+import JsonLd from './JsonLd.astro';
+import { faqSchema } from '../lib/schema';
+
+interface Props {
+  items: { q: string; a: string }[];
+  /** Ajouter les données structurées FAQPage (une seule FAQ balisée par page). */
+  withSchema?: boolean;
+}
+
+const { items, withSchema = true } = Astro.props;
+---
+
+<div class="faq">
+  {
+    items.map((item) => (
+      <details>
+        <summary>
+          <span>{item.q}</span>
+          <span class="faq-mark" aria-hidden="true" />
+        </summary>
+        <p>{item.a}</p>
+      </details>
+    ))
+  }
+</div>
+{withSchema && items.length > 0 && <JsonLd data={faqSchema(items)} />}
+
+<style>
+  .faq {
+    border-top: 1px solid var(--pierre-fonce);
+  }
+
+  details {
+    border-bottom: 1px solid var(--pierre-fonce);
+  }
+
+  summary {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1.5rem;
+    padding-block: 1.2rem;
+    cursor: pointer;
+    list-style: none;
+    font-weight: 600;
+    font-size: 1.05rem;
+  }
+
+  summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .faq-mark {
+    position: relative;
+    flex: none;
+    width: 0.9rem;
+    height: 0.9rem;
+  }
+
+  .faq-mark::before,
+  .faq-mark::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    width: 100%;
+    height: 1px;
+    background: var(--ardoise);
+  }
+
+  .faq-mark::after {
+    transform: rotate(90deg);
+    transition: transform 0.2s ease;
+  }
+
+  details[open] .faq-mark::after {
+    transform: rotate(0deg);
+  }
+
+  details p {
+    padding-bottom: 1.4rem;
+    max-width: 44rem;
+    color: var(--gris);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .faq-mark::after {
+      transition: none;
+    }
+  }
+</style>

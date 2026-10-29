@@ -1,0 +1,101 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHero from '../../components/PageHero.astro';
+import CtaBlock from '../../components/CtaBlock.astro';
+import { site } from '../../config/site';
+import { localBusinessSchema } from '../../lib/schema';
+import { whatsappMessages } from '../../lib/contact';
+
+const zones = (await getCollection('zones')).sort((a, b) => a.data.order - b.data.order);
+const zoneNames = new Set(zones.map((z) => z.data.name));
+const otherAreas = site.areaServed.filter((area) => !zoneNames.has(area));
+---
+
+<BaseLayout
+  title="Zones d'intervention : Paris et ouest parisien"
+  description="Decor Concept rénove des appartements à Paris (7e, 8e, 15e, 16e, 17e) et dans l'ouest parisien : Neuilly-sur-Seine, Boulogne-Billancourt, Levallois-Perret, Saint-Cloud."
+  jsonLd={localBusinessSchema()}
+  whatsappMessage={whatsappMessages.devis}
+>
+  <PageHero
+    title="Où nous intervenons"
+    lead="Paris et l'ouest parisien, où se trouvent la plupart de nos chantiers. Pour un projet ailleurs en Île-de-France, contactez-nous : nous étudions chaque demande."
+    crumbs={[{ name: "Zones d'intervention", href: '/zones/' }]}
+  />
+
+  <section class="section">
+    <div class="container-site">
+      <ul class="zones">
+        {
+          zones.map((zone) => (
+            <li>
+              <a href={`/zones/${zone.id}/`} class="zone">
+                <span class="zone-name">{zone.data.name}</span>
+                <span class="zone-intro">{zone.data.intro}</span>
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+
+      {
+        otherAreas.length > 0 && (
+          <div class="others">
+            <h2>Nous intervenons aussi à</h2>
+            <p class="lead">{otherAreas.join(', ')}.</p>
+          </div>
+        )
+      }
+    </div>
+  </section>
+
+  <CtaBlock whatsappMessage={whatsappMessages.devis} />
+</BaseLayout>
+
+<style>
+  .zones {
+    border-top: 1px solid var(--ardoise);
+  }
+
+  .zone {
+    display: grid;
+    gap: 0.5rem;
+    padding-block: 1.75rem;
+    border-bottom: 1px solid var(--pierre-fonce);
+    text-decoration: none;
+  }
+
+  @media (min-width: 900px) {
+    .zone {
+      grid-template-columns: 1fr 2fr;
+      gap: 3rem;
+      align-items: baseline;
+    }
+  }
+
+  .zone-name {
+    font-family: var(--ff-display);
+    font-size: clamp(1.6rem, 1.3rem + 1vw, 2.2rem);
+  }
+
+  .zone-intro {
+    color: var(--gris);
+  }
+
+  .zone:hover .zone-name {
+    color: var(--vert);
+  }
+
+  .others {
+    margin-top: 4rem;
+  }
+
+  .others h2 {
+    font-size: 1.6rem;
+  }
+
+  .others .lead {
+    margin-top: 0.75rem;
+  }
+</style>

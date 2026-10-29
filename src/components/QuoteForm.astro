@@ -1,0 +1,216 @@
+---
+/**
+ * Formulaire de demande de devis qualifiant.
+ *
+ * Envoi : Web3Forms (https://web3forms.com), sans serveur.
+ * - Démo, ou clé absente : le formulaire ne s'envoie pas et affiche un message.
+ * - Production : renseigner PUBLIC_WEB3FORMS_KEY (voir .env.example) et passer
+ *   site.demo à false.
+ *
+ * Les tranches de budget sont à ajuster au seuil de rentabilité du client.
+ */
+import { site, formIsLive } from '../config/site';
+import { whatsappLink, whatsappMessages } from '../lib/contact';
+
+const redirectUrl = new URL('/contact/merci/', Astro.site ?? site.url).toString();
+
+const projets = ['Rénovation complète', 'Cuisine', 'Salle de bain', 'Agencement sur mesure', 'Autre'];
+const budgets = [
+  'Moins de 20 000 €',
+  'De 20 000 à 50 000 €',
+  'De 50 000 à 100 000 €',
+  'De 100 000 à 200 000 €',
+  'Plus de 200 000 €',
+  'Je ne sais pas encore',
+];
+const delais = ['Dès que possible', 'Dans les 3 mois', 'Dans 3 à 6 mois', 'Pas encore défini'];
+const contacts = ['Téléphone', 'WhatsApp', 'Email'];
+---
+
+<form
+  class="quote-form"
+  action={site.form.endpoint}
+  method="POST"
+  data-quote-form
+  data-live={formIsLive ? 'true' : 'false'}
+>
+  <input type="hidden" name="access_key" value={site.form.accessKey} />
+  <input type="hidden" name="subject" value="Nouvelle demande de devis depuis le site" />
+  <input type="hidden" name="from_name" value={`Site ${site.name}`} />
+  <input type="hidden" name="redirect" value={redirectUrl} />
+  <input type="checkbox" name="botcheck" class="hidden" tabindex="-1" autocomplete="off" aria-hidden="true" />
+
+  <fieldset class="field">
+    <legend>Votre projet</legend>
+    <div class="choices">
+      {
+        projets.map((p, i) => (
+          <label class="choice">
+            <input type="radio" name="Type de projet" value={p} required={i === 0} checked={i === 0} />
+            {p}
+          </label>
+        ))
+      }
+    </div>
+  </fieldset>
+
+  <div class="grid-2">
+    <div class="field">
+      <label for="bien">Type de bien</label>
+      <select id="bien" name="Type de bien" class="input">
+        <option>Appartement</option>
+        <option>Maison</option>
+        <option>Local professionnel</option>
+      </select>
+    </div>
+    <div class="field">
+      <label for="surface">Surface concernée (m²)</label>
+      <input id="surface" name="Surface (m²)" type="number" inputmode="numeric" min="1" class="input" placeholder="Ex. 120" />
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="field">
+      <label for="lieu">Arrondissement ou commune</label>
+      <input id="lieu" name="Localisation" type="text" class="input" placeholder="Ex. Paris 16e, Neuilly-sur-Seine" required />
+    </div>
+    <div class="field">
+      <label for="budget">Budget envisagé</label>
+      <select id="budget" name="Budget" class="input">
+        {budgets.map((b) => <option>{b}</option>)}
+      </select>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="field">
+      <label for="delai">Démarrage souhaité</label>
+      <select id="delai" name="Démarrage souhaité" class="input">
+        {delais.map((d) => <option>{d}</option>)}
+      </select>
+    </div>
+    <fieldset class="field">
+      <legend>Un architecte ou décorateur est-il impliqué ?</legend>
+      <div class="choices">
+        <label class="choice"><input type="radio" name="Architecte impliqué" value="Oui" /> Oui</label>
+        <label class="choice"><input type="radio" name="Architecte impliqué" value="Non" checked /> Non</label>
+      </div>
+    </fieldset>
+  </div>
+
+  <div class="field">
+    <label for="message">Décrivez votre projet</label>
+    <textarea id="message" name="Message" rows="5" class="input" placeholder="État actuel, pièces concernées, ce que vous souhaitez changer…"></textarea>
+    <p class="hint">
+      Des plans ou des photos ? Envoyez-les sur
+      <a class="link" href={whatsappLink(whatsappMessages.devis)} target="_blank" rel="noopener">WhatsApp</a>
+      après votre demande.
+    </p>
+  </div>
+
+  <div class="grid-2">
+    <div class="field">
+      <label for="nom">Nom</label>
+      <input id="nom" name="Nom" type="text" autocomplete="name" class="input" required />
+    </div>
+    <div class="field">
+      <label for="tel">Téléphone</label>
+      <input id="tel" name="Téléphone" type="tel" autocomplete="tel" class="input" required />
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="field">
+      <label for="email">Email</label>
+      <input id="email" name="email" type="email" autocomplete="email" class="input" />
+    </div>
+    <fieldset class="field">
+      <legend>Comment préférez-vous être recontacté ?</legend>
+      <div class="choices">
+        {
+          contacts.map((c, i) => (
+            <label class="choice">
+              <input type="radio" name="Contact préféré" value={c} checked={i === 0} />
+              {c}
+            </label>
+          ))
+        }
+      </div>
+    </fieldset>
+  </div>
+
+  <p class="hint">
+    Vos informations servent uniquement à répondre à votre demande. Elles ne sont ni revendues ni utilisées pour de la
+    prospection. <a class="link" href="/confidentialite/">En savoir plus</a>
+  </p>
+
+  <div class="submit-row">
+    <button type="submit" class="btn btn-primary" data-umami-event="envoi-formulaire-devis">Envoyer ma demande</button>
+    <p class="meta">Réponse {site.contact.responseDelay}.</p>
+  </div>
+
+  <p class="form-status" role="status" aria-live="polite" data-form-status hidden></p>
+</form>
+
+<script>
+  const form = document.querySelector<HTMLFormElement>('[data-quote-form]');
+  const status = document.querySelector<HTMLElement>('[data-form-status]');
+  if (form && status && form.dataset.live !== 'true') {
+    form.addEventListener('submit', (event) => {
+      event.preventDefault();
+      status.hidden = false;
+      status.textContent =
+        "Formulaire de démonstration : aucune demande n'a été envoyée. L'envoi réel sera activé à la mise en ligne du site.";
+    });
+  }
+</script>
+
+<style>
+  .quote-form {
+    display: grid;
+    gap: 1.5rem;
+  }
+
+  fieldset {
+    border: 0;
+    padding: 0;
+    margin: 0;
+    min-width: 0;
+  }
+
+  .grid-2 {
+    display: grid;
+    gap: 1.5rem;
+  }
+
+  @media (min-width: 700px) {
+    .grid-2 {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  .choices {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 0.4rem;
+  }
+
+  textarea.input {
+    resize: vertical;
+  }
+
+  .submit-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1rem 1.5rem;
+  }
+
+  .form-status {
+    padding: 1rem 1.2rem;
+    border-left: 2px solid var(--laiton);
+    background: var(--blanc);
+    font-weight: 600;
+  }
+</style>

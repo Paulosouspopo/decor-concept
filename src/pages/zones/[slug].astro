@@ -1,0 +1,136 @@
+---
+import { getCollection, render, type CollectionEntry } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHero from '../../components/PageHero.astro';
+import ContactButtons from '../../components/ContactButtons.astro';
+import ProjectCard from '../../components/ProjectCard.astro';
+import CtaBlock from '../../components/CtaBlock.astro';
+import { localBusinessSchema } from '../../lib/schema';
+import { whatsappMessages } from '../../lib/contact';
+
+/**
+ * Pages locales. Règle SEO : une page n'existe que si un vrai chantier l'illustre,
+ * avec un texte propre au secteur (pas de pages ville dupliquées).
+ */
+export async function getStaticPaths() {
+  const zones = await getCollection('zones');
+  return zones.map((zone) => ({ params: { slug: zone.id }, props: { zone } }));
+}
+
+interface Props {
+  zone: CollectionEntry<'zones'>;
+}
+
+const { zone } = Astro.props;
+const { data } = zone;
+const { Content } = await render(zone);
+
+const projects = (await getCollection('realisations'))
+  .filter((p) => p.data.zone === zone.id)
+  .sort((a, b) => a.data.order - b.data.order);
+
+const services = (await getCollection('services')).sort((a, b) => a.data.order - b.data.order);
+const waMessage = whatsappMessages.zone(data.name);
+---
+
+<BaseLayout title={data.metaTitle} description={data.metaDescription} jsonLd={localBusinessSchema()} whatsappMessage={waMessage}>
+  <PageHero
+    title={data.title}
+    lead={data.intro}
+    crumbs={[
+      { name: "Zones d'intervention", href: '/zones/' },
+      { name: data.name, href: `/zones/${zone.id}/` },
+    ]}
+  >
+    <ContactButtons whatsappMessage={waMessage} tracking={`zone-${zone.id}`} />
+  </PageHero>
+
+  {
+    projects.length > 0 && (
+      <section class="section">
+        <div class="container-site">
+          <h2 class="block-title">Nos chantiers à {data.name}</h2>
+          <div class="projects">
+            {projects.map((project) => <ProjectCard project={project} />)}
+          </div>
+        </div>
+      </section>
+    )
+  }
+
+  <section class="section section-pierre">
+    <div class="container-site zone-body">
+      <div class="prose-site">
+        <Content />
+      </div>
+      <aside>
+        <p class="meta">Nos prestations</p>
+        <ul class="aside-list">
+          {
+            services.map((s) => (
+              <li>
+                <a href={`/renovation/${s.id}/`} class="link">
+                  {s.data.navTitle}
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+        {
+          data.nearby.length > 0 && (
+            <>
+              <p class="meta aside-gap">Secteurs voisins</p>
+              <p>{data.nearby.join(', ')}</p>
+            </>
+          )
+        }
+      </aside>
+    </div>
+  </section>
+
+  <CtaBlock
+    title={`Un projet à ${data.name} ?`}
+    whatsappMessage={waMessage}
+    tracking={`fin-zone-${zone.id}`}
+  />
+</BaseLayout>
+
+<style>
+  .block-title {
+    margin-bottom: 2.5rem;
+  }
+
+  .projects {
+    display: grid;
+    gap: 2.5rem;
+  }
+
+  @media (min-width: 768px) {
+    .projects {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  .zone-body {
+    display: grid;
+    gap: 3rem;
+  }
+
+  @media (min-width: 900px) {
+    .zone-body {
+      grid-template-columns: 1fr 16rem;
+      gap: 5rem;
+    }
+  }
+
+  .aside-list {
+    margin-top: 0.5rem;
+    display: grid;
+    gap: 0.4rem;
+  }
+
+  .aside-gap {
+    margin-top: 1.5rem;
+    margin-bottom: 0.4rem;
+  }
+</style>

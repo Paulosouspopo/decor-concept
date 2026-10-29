@@ -1,0 +1,29 @@
+[
+  {
+    "id": "exemple-1",
+    "text": "Un chantier de cinq mois sans une mauvaise surprise. Le devis était détaillé ligne par ligne et la facture finale lui correspondait.",
+    "author": "Exemple de client",
+    "location": "Paris 16e",
+    "project": "Rénovation complète",
+    "source": "exemple",
+    "order": 1
+  },
+  {
+    "id": "exemple-2",
+    "text": "Nous vivions à l'étranger pendant les travaux. Les photos chaque semaine et un interlocuteur toujours joignable ont tout changé.",
+    "author": "Exemple de client",
+    "location": "Paris 17e",
+    "project": "Rénovation complète",
+    "source": "exemple",
+    "order": 2
+  },
+  {
+    "id": "exemple-3",
+    "text": "Une équipe soigneuse et discrète. Les parties communes étaient protégées et nettoyées tous les soirs, nos voisins s'en souviennent encore.",
+    "author": "Exemple de client",
+    "location": "Neuilly-sur-Seine",
+    "project": "Cuisine et salle de bain",
+    "source": "exemple",
+    "order": 3
+  }
+]
