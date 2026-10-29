@@ -76,7 +76,8 @@ const contacts = ['Téléphone', 'WhatsApp', 'Email'];
     </div>
     <div class="field">
       <label for="budget">Budget envisagé</label>
-      <select id="budget" name="Budget" class="input">
+      <select id="budget" name="Budget" class="input" required>
+        <option value="" selected disabled>Choisir une tranche</option>
         {budgets.map((b) => <option>{b}</option>)}
       </select>
     </div>
@@ -85,7 +86,8 @@ const contacts = ['Téléphone', 'WhatsApp', 'Email'];
   <div class="grid-2">
     <div class="field">
       <label for="delai">Démarrage souhaité</label>
-      <select id="delai" name="Démarrage souhaité" class="input">
+      <select id="delai" name="Démarrage souhaité" class="input" required>
+        <option value="" selected disabled>Choisir</option>
         {delais.map((d) => <option>{d}</option>)}
       </select>
     </div>

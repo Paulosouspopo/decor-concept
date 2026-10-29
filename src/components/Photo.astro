@@ -109,7 +109,8 @@ const {
   }
 
   .tone-neutre {
-    background-color: var(--pierre);
+    /* un ton sous --pierre, pour rester visible sur une section-pierre */
+    background-color: color-mix(in srgb, var(--pierre) 60%, var(--pierre-fonce));
   }
 
   .tone-neutre .moulure {
