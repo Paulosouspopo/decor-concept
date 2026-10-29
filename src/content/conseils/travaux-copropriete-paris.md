@@ -1,5 +1,5 @@
 ---
-title: "Travaux en copropriété à Paris : autorisations, voisinage, organisation"
+title: "Travaux en copropriété à Paris : autorisations et voisinage"
 description: "Ce qu'il faut savoir avant de rénover un appartement en copropriété : travaux soumis à l'assemblée générale, information du syndic, voisins, parties communes."
 date: 2026-10-01
 service: "appartement-complet"

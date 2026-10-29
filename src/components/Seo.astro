@@ -13,8 +13,10 @@ interface Props {
 
 const { title, description, noindex = false, image, type = 'website' } = Astro.props;
 
-// Titre : « Titre de page | Decor Concept », sauf si le nom y figure déjà.
-const fullTitle = title.includes(site.name) ? title : `${title} | ${site.name}`;
+// Titre : « Titre de page | Decor Concept », sauf si le nom y figure déjà
+// ou si le suffixe ferait dépasser 60 caractères (Google tronque au-delà).
+const suffixed = `${title} | ${site.name}`;
+const fullTitle = title.includes(site.name) || suffixed.length > 60 ? title : suffixed;
 const canonical = new URL(Astro.url.pathname, Astro.site ?? site.url).toString();
 const robots = site.demo || noindex ? 'noindex, nofollow' : 'index, follow, max-image-preview:large';
 ---
