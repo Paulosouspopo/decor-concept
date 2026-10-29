@@ -22,6 +22,7 @@ faq:
     a: "Dans la plupart des cas. Les lames trop endommagées sont remplacées par des lames de récupération de la même essence, puis l'ensemble est poncé et vitrifié ou huilé. Le remplacement complet n'est envisagé que si le support est en mauvais état."
   - q: "Faut-il prévoir des diagnostics avant les travaux ?"
     a: "Dans un immeuble ancien, un repérage de l'amiante et du plomb peut être nécessaire avant de démolir. Nous vous indiquons lors de la visite technique ce qui doit être réalisé pour votre appartement."
+cover: ../../assets/photos/services/appartement-haussmannien.jpg
 ---
 
 ## Garder le caractère, changer le confort

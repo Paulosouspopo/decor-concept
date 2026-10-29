@@ -24,6 +24,7 @@ faq:
     a: "Pour une rénovation complète, ce n'est pas possible : l'électricité, l'eau et les sols sont repris. C'est pourquoi nous établissons un planning ferme avant de démarrer, pour que vous puissiez organiser votre logement provisoire."
   - q: "Comment le prix est-il établi ?"
     a: "Après une visite technique, nous remettons un devis détaillé poste par poste, avec les quantités et les matériaux. Les éventuels imprévus découverts pendant le chantier (un plancher abîmé, par exemple) vous sont présentés avec leur chiffrage avant toute intervention."
+cover: ../../assets/photos/services/appartement-complet.jpg
 ---
 
 ## Une seule entreprise, du premier coup de masse à la dernière couche de peinture

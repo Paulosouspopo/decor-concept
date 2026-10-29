@@ -19,6 +19,7 @@ faq:
     a: "Oui. Nous préparons la pièce selon les plans du cuisiniste, nous réalisons les raccordements et nous coordonnons la pose. Vous avez un seul interlocuteur pour les travaux autour de la cuisine."
   - q: "Peut-on déplacer l'évier ou la plaque de cuisson ?"
     a: "En général, oui. Le point à vérifier est l'évacuation : elle doit garder une pente suffisante jusqu'à la colonne de l'immeuble. Pour la hotte, nous vérifions les possibilités d'extraction. Ces points sont étudiés lors de la visite technique."
+cover: ../../assets/photos/services/cuisine.jpg
 ---
 
 ## Une cuisine, plusieurs métiers

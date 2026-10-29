@@ -17,6 +17,13 @@ testimonial:
   text: "Un devis détaillé ligne par ligne, et au final une facture identique au devis. C'est ce qui nous a convaincus de les recommander."
   author: "Exemple de témoignage"
   fictif: true
+before: ../../assets/photos/realisations/boulogne-annees-30-150m2/avant.jpg
+after: ../../assets/photos/realisations/boulogne-annees-30-150m2/apres.jpg
+gallery:
+  - src: ../../assets/photos/realisations/boulogne-annees-30-150m2/rangements.jpg
+    alt: "Rangements sur mesure laqués blanc le long de la cuisine, Boulogne-Billancourt"
+  - src: ../../assets/photos/realisations/boulogne-annees-30-150m2/sejour.jpg
+    alt: "Séjour lumineux après ouverture des cloisons, Boulogne-Billancourt"
 ---
 
 ## Le projet

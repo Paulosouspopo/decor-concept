@@ -17,6 +17,13 @@ testimonial:
   text: "Une équipe propre, discrète et ponctuelle. Nos voisins ne se sont jamais plaints, ce qui en copropriété n'est pas rien."
   author: "Exemple de témoignage"
   fictif: true
+before: ../../assets/photos/realisations/neuilly-cuisine-salle-de-bain/avant.jpg
+after: ../../assets/photos/realisations/neuilly-cuisine-salle-de-bain/apres.jpg
+gallery:
+  - src: ../../assets/photos/realisations/neuilly-cuisine-salle-de-bain/douche.jpg
+    alt: "Douche à l'italienne en marbre avec niche, Neuilly-sur-Seine"
+  - src: ../../assets/photos/realisations/neuilly-cuisine-salle-de-bain/douche-niche.jpg
+    alt: "Douche à l'italienne en grès sombre avec niche intégrée, Neuilly-sur-Seine"
 ---
 
 ## Le projet

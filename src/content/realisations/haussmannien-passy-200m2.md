@@ -17,6 +17,13 @@ testimonial:
   text: "Nous étions à Londres pendant tout le chantier. Les photos chaque vendredi et un interlocuteur qui répondait toujours nous ont permis de rester sereins."
   author: "Exemple de témoignage"
   fictif: true
+before: ../../assets/photos/realisations/haussmannien-passy-200m2/avant.jpg
+after: ../../assets/photos/realisations/haussmannien-passy-200m2/apres.jpg
+gallery:
+  - src: ../../assets/photos/realisations/haussmannien-passy-200m2/salon.jpg
+    alt: "Salon avec moulures et cheminée, appartement haussmannien, Paris 16e"
+  - src: ../../assets/photos/realisations/haussmannien-passy-200m2/salle-de-bain.jpg
+    alt: "Salle de bain avec baignoire en cuivre sous moulures, Paris 16e"
 ---
 
 ## Le projet

@@ -18,6 +18,13 @@ testimonial:
   text: "Le chantier a été livré à la date prévue au planning, ce qui n'arrive presque jamais. Les finitions de la cuisine sont parfaites."
   author: "Exemple de témoignage"
   fictif: true
+before: ../../assets/photos/realisations/plaine-monceau-120m2/avant.jpg
+after: ../../assets/photos/realisations/plaine-monceau-120m2/apres.jpg
+gallery:
+  - src: ../../assets/photos/realisations/plaine-monceau-120m2/cuisine-plan.jpg
+    alt: "Plan de travail en marbre et façades en chêne à poignées laiton, Paris 17e"
+  - src: ../../assets/photos/realisations/plaine-monceau-120m2/cuisine-detail.jpg
+    alt: "Îlot en chêne et robinetterie laiton, cuisine sur mesure, Paris 17e"
 ---
 
 ## Le projet

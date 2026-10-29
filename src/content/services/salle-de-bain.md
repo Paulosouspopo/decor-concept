@@ -20,6 +20,7 @@ faq:
     a: "Souvent, mais pas toujours de plain-pied. Tout dépend de la hauteur disponible sous le sol pour donner de la pente à l'évacuation. Lorsque ce n'est pas possible, nous proposons un receveur extra-plat ou une légère marche."
   - q: "Comment évitez-vous les dégâts des eaux chez le voisin du dessous ?"
     a: "Par une étanchéité posée sous le carrelage sur toute la zone de douche, remontée sur les murs, et par des raccordements testés avant la pose des finitions. C'est l'étape que nous ne bâclons jamais."
+cover: ../../assets/photos/services/salle-de-bain.jpg
 ---
 
 ## L'étanchéité d'abord

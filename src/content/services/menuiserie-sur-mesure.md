@@ -18,6 +18,7 @@ faq:
   - q: "Fabriquez-vous vous-mêmes les meubles sur mesure ?"
     # À CONFIRMER avec le client : fabrication en atelier propre ou par un menuisier partenaire
     a: "Nous prenons les mesures, nous coordonnons la fabrication et nous assurons la pose. Vous avez un seul interlocuteur, du dessin à l'installation."
+cover: ../../assets/photos/services/menuiserie-sur-mesure.jpg
 ---
 
 ## Du relevé à la pose
