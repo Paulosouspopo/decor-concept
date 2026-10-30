@@ -1,0 +1,9 @@
+// Déploiement Cloudflare (Workers, fichiers statiques) : sert le dossier dist/ généré par Astro.
+{
+  "name": "decor-concept",
+  "compatibility_date": "2026-10-01",
+  "assets": {
+    "directory": "./dist",
+    "not_found_handling": "404-page"
+  }
+}
